@@ -341,3 +341,7 @@ healthchecksdb
 
 #configuration files with commercial information
 *.config
+
+#lavalink 
+lavalink/
+
