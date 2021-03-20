@@ -23,9 +23,16 @@ namespace DiscordBotHandler.Services
     public class DotaImageDraw : IDraw
     {
         private readonly ILogger _logger;
+        private readonly IDotaAssistans _dota;
+        private readonly IStorage<Image> _heroImageStorage;
+        private readonly IStorage<Image> _itemImageStorage;
         public DotaImageDraw(IServiceProvider service)
         {
+            var providerDelegat = service.GetRequiredService<Func<StorageContains, IStorage<Image>>>();
             _logger = service.GetRequiredService<ILogger>();
+            _dota = service.GetRequiredService<IDotaAssistans>();
+            _heroImageStorage = providerDelegat(StorageContains.DotaHero);
+            _itemImageStorage = providerDelegat(StorageContains.DotaItem);
         }
         struct Sizes
         {
@@ -90,32 +97,24 @@ namespace DiscordBotHandler.Services
                     foreach (var heroes in matchDota.Players)
                     {
                         Image<Rgba32> hero = new Image<Rgba32>(Size.heroesColumnWidth, Size.heroesColumnHeight);
-                        var requestPortrait = WebRequest.Create(heroes.HeroImageUrl);
+                        Image heroPortrait = _heroImageStorage.GetObject(_dota.GetHeroById(heroes.HeroId).Name);
 
-                        using (var responsePortrait = requestPortrait.GetResponse())
-                        using (var streamPortrait = responsePortrait.GetResponseStream())
-                        {
-                            Image heroPortrait = Image.Load(streamPortrait);
-                            heroPortrait.Mutate(o => o.Resize(new SixLabors.ImageSharp.Size(Size.heroPortraitWidth, Size.heroPortraitHeight)));
-                            pickedHeores.Add(heroes.HeroId, heroPortrait);
-                            hero.Mutate(o => o.DrawImage(heroPortrait, new Point(Size.heroesColumnIndent, 0), 1f));
-                        }
+                        heroPortrait.Mutate(o => o.Resize(new SixLabors.ImageSharp.Size(Size.heroPortraitWidth, Size.heroPortraitHeight)));
+                        pickedHeores.Add(heroes.HeroId, heroPortrait);
+                        hero.Mutate(o => o.DrawImage(heroPortrait, new Point(Size.heroesColumnIndent, 0), 1f));
+
                         foreach (var item in heroes.Items)
                         {
                             if (item.ItemId != 0)
                             {
-                                var requestItem = WebRequest.Create(item.ItemImageUrl);
+                                using Image heroItem = _itemImageStorage.GetObject(_dota.GetItemById(item.ItemId).Name);
 
-                                using (var responseItem = requestItem.GetResponse())
-                                using (var streamItem = responseItem.GetResponseStream())
-                                {
-                                    using Image heroItem = Image.Load(streamItem);
-                                    heroItem.Mutate(o => o.Resize(new Size(Size.itemSquare, Size.itemSquare)));
-                                    int intentWidth = Size.heroesColumnIndent + ((item.Slot + 1) % 2 == 0 ? (Size.itemSquare + Size.heroesColumnIndent * 2) : 0);
-                                    int row = (int)Math.Floor((double)item.Slot / 2);
-                                    int intentHeight = Size.itemHorizontalIntent + Size.itemHorizontalIntent * row + Size.itemSquare * row;
-                                    hero.Mutate(o => o.DrawImage(heroItem, new Point(intentWidth, intentHeight + Size.heroPortraitHeight), 1f));
-                                }
+                                heroItem.Mutate(o => o.Resize(new Size(Size.itemSquare, Size.itemSquare)));
+                                int intentWidth = Size.heroesColumnIndent + ((item.Slot + 1) % 2 == 0 ? (Size.itemSquare + Size.heroesColumnIndent * 2) : 0);
+                                int row = (int)Math.Floor((double)item.Slot / 2);
+                                int intentHeight = Size.itemHorizontalIntent + Size.itemHorizontalIntent * row + Size.itemSquare * row;
+                                hero.Mutate(o => o.DrawImage(heroItem, new Point(intentWidth, intentHeight + Size.heroPortraitHeight), 1f));
+
                             }
                         }
                         IPen pen = new Pen(Color.Yellow, 5);
@@ -358,13 +357,7 @@ namespace DiscordBotHandler.Services
                         }
                         else
                         {
-                            var requestItem = WebRequest.Create(pb.HeroImageUrl);
-
-                            using (var responseItem = requestItem.GetResponse())
-                            using (var streamItem = responseItem.GetResponseStream())
-                            {
-                                ImageToDraw = Image.Load(streamItem);
-                            }
+                            ImageToDraw = _heroImageStorage.GetObject(_dota.GetHeroById(pb.HeroId).Name);
                         }
                         ImageToDraw.Mutate(o => o.Resize(Size.heroPortraitPickBanWidth, Size.heroPortraitPickBanHeight));
                         if (pb.Team == 0)
@@ -375,18 +368,18 @@ namespace DiscordBotHandler.Services
                             }
                             else
                             {
-                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * bonusCounter++, Size.heroPortraitPickBanHeight * 2+ Size.itemHorizontalIntent), 1f));
+                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * bonusCounter++, Size.heroPortraitPickBanHeight * 2 + Size.itemHorizontalIntent), 1f));
                             }
                         }
                         else
                         {
                             if (CounterDire < 12)
                             {
-                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * CounterDire++, Size.heroPortraitPickBanHeight+ Size.itemHorizontalIntent), 1f));
+                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * CounterDire++, Size.heroPortraitPickBanHeight + Size.itemHorizontalIntent), 1f));
                             }
                             else
                             {
-                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * bonusCounter++, Size.heroPortraitPickBanHeight * 2+ Size.itemHorizontalIntent), 1f));
+                                picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(Size.heroPortraitPickBanWidth * bonusCounter++, Size.heroPortraitPickBanHeight * 2 + Size.itemHorizontalIntent), 1f));
                             }
                         }
                         ImageToDraw.Dispose();

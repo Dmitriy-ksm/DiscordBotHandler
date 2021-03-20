@@ -19,8 +19,8 @@ namespace DiscordBotHandler.Services
         private DOTA2Econ dotaEconInterface;
         private DOTA2Match dotaInterface;
         private SteamUser steamInterface;
-        public List<Hero> Heroes;
-        public List<GameItem> Items;
+        private List<Hero> Heroes;
+        private List<GameItem> Items;
         public DotaAssistans()
         {
             webInterfaceFactory = new SteamWebInterfaceFactory(ConfigurationManager.AppSettings["steamWebApi"]);
@@ -29,6 +29,14 @@ namespace DiscordBotHandler.Services
             dotaInterface = webInterfaceFactory.CreateSteamWebInterface<DOTA2Match>(new HttpClient());
             GetHeroes();
             GetItems();
+        }
+        public Hero GetHeroById(uint id)
+        {
+            return Heroes.FirstOrDefault(h => h.Id == id);
+        }
+        public GameItem GetItemById(uint id)
+        {
+            return Items.FirstOrDefault(i => i.Id == id);
         }
         public async Task<ulong> GetSteamIdAsync(string url)
         {

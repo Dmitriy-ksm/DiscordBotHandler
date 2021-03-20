@@ -22,6 +22,8 @@ using DiscordBotHandler.Interfaces;
 using System.Text.Json;
 using System.Threading;
 using System.Timers;
+using SixLabors.ImageSharp;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace DiscordBotHandler
 {
@@ -66,7 +68,34 @@ namespace DiscordBotHandler
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
                 .AddSingleton<DiscordSocketClient>()
-                /**/
+                .AddTransient<ItemImageProvider>()
+                .AddTransient<HeroImageProvider>()
+                .AddSingleton<ImageStorageHero>()
+                .AddSingleton<ImageStorageItem>()
+                .AddTransient<Func<StorageContains, IStorageProvider<Image>>>(serviceProvider => key =>
+                {
+                    switch (key)
+                    {
+                        case StorageContains.DotaHero:
+                            return serviceProvider.GetService<HeroImageProvider>();
+                        case StorageContains.DotaItem:
+                            return serviceProvider.GetService<ItemImageProvider>();
+                        default:
+                            throw new KeyNotFoundException();
+                    }
+                })
+                .AddTransient<Func<StorageContains, IStorage<Image>>>(serviceProvider => key =>
+                {
+                    switch (key)
+                    {
+                        case StorageContains.DotaHero:
+                            return serviceProvider.GetService<ImageStorageHero>();
+                        case StorageContains.DotaItem:
+                            return serviceProvider.GetService<ImageStorageItem>();
+                        default:
+                            throw new KeyNotFoundException();
+                    }
+                })
                 .AddSingleton<HttpClient>()
                 .AddSingleton<ILogger, Logger.Logger>()
                 .AddSingleton<IDraw, DotaImageDraw>()
