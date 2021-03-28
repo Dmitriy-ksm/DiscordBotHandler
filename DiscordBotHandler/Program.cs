@@ -111,6 +111,7 @@ namespace DiscordBotHandler
                          .GetAwaiter().GetResult();
                      return service;
                  })
+                 .AddSingleton<ICooldown,Cooldown>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
         }

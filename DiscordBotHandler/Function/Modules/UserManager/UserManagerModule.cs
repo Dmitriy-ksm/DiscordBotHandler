@@ -31,7 +31,7 @@ namespace DiscordBotHandler.Function.Modules.UserManager
         [Command("addInfoes")]
         [Summary("Adding additional info for users")]
         [RequireBotModerationRole]
-        public Task SetAdditionalInfoes(SocketUser user, string key, params string[] valueFull)
+        public Task SetAdditionalInfoes([Summary("User whos get new infoes")] SocketUser user, [Summary("Info key")] string key, [Summary("Info")] params string[] valueFull)
         {
             string value = string.Join(" ", valueFull);
             if (_verificator.IsValid("usermanager", Context.Guild.Id, Context.Channel.Id, out string debugString))
@@ -77,7 +77,7 @@ namespace DiscordBotHandler.Function.Modules.UserManager
         [Command("addSteamUser")]
         [Summary("Adding steamId to discord user")]
         [RequireBotModerationRole]
-        public Task SetSteamId(SocketUser user, string url)
+        public Task SetSteamId([Summary("User whos get new infoes")] SocketUser user, [Summary("User steam profile url")]string url)
         {
             if (_verificator.IsValid("usermanager", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {
