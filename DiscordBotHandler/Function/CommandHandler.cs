@@ -76,6 +76,7 @@ namespace DiscordBotHandler.Function
            
             if (reply != null)
             {
+                _cooldown.Set("wordsearch");
                 message.Channel.SendMessageAsync(reply);
             }
             int argPos = 0;
