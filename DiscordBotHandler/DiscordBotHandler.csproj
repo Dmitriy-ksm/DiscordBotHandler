@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Services\CoolDown.cs" />
     <Compile Include="Services\Crypto.cs" />
     <Compile Include="Services\DotaAssistans.cs" />
     <Compile Include="Services\DotaImageDraw.cs" />

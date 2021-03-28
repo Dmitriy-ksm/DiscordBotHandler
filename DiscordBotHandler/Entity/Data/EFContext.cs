@@ -35,22 +35,7 @@ namespace DiscordBotHandler.Entity.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<CryptoInfo>().HasData(new CryptoInfo
-            { Id=1, EthUsdTime = "1615914281", EthUsd = 1800.65, GasAvarage = 227, EthBtc = 0.03233, EthBtcTime = "1615914281" });
-
-            modelBuilder.Entity<UserInfo>().HasData(new UserInfo
-            { Id = 228937227210719232, SteamId = 76561198064401017 },
-            new UserInfo
-            { Id = 409865565373726741, SteamId = 76561198017362452 },
-            new UserInfo
-            { Id = 516684301723762700, SteamId = 76561198160362424 },
-            new UserInfo
-            { Id = 723918995434111026, SteamId = 76561199066026629 });
-
-            modelBuilder.Entity<Guilds>().HasData(new Guilds
-            { GuildId = 715942326312108097, VoiceChannelId = 715951730856165417, WordSearches = new List<WordSearch>() });
-
-           
+            modelBuilder.Entity<Cooldown>().HasData(new Cooldown { Key = "wordsearch", KeyCooldown = 60, LastUse = DateTime.MinValue });
         }
         #endregion
 
@@ -61,5 +46,6 @@ namespace DiscordBotHandler.Entity.Data
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<WordSearch> WordSearches { get; set; }
 
+        public DbSet<Cooldown> Cooldowns { get; set; }
     }
 }

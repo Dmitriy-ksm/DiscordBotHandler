@@ -36,7 +36,7 @@ namespace DiscordBotHandler.Function.Modules.Player
         }
         [Command("addVoiceChanel")]
         [Summary("Add voice channel for guild player")]
-        public Task AddingVoiuceChannel(ulong voiceChannelId)
+        public Task AddingVoiuceChannel([Summary("Voice channel id for the player")] ulong voiceChannelId)
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {
@@ -68,7 +68,7 @@ namespace DiscordBotHandler.Function.Modules.Player
         }
         [Command("addTrack")]
         [Summary("Adding track to queue")]
-        public Task AddingTrack(string uri)
+        public Task AddingTrack([Summary("URL to track")] string uri)
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {
@@ -83,7 +83,7 @@ namespace DiscordBotHandler.Function.Modules.Player
 
         [Command("addTrackList")]
         [Summary("Adding track to queue")]
-        public Task AddingTrackList(string uri)
+        public Task AddingTrackList([Summary("URL to tracks list")] string uri)
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {

@@ -27,7 +27,7 @@ namespace DiscordBotHandler.Function.Modules.WordSearch
         [Command("addWordsAndReply")]
         [Summary("Adding words and replies")]
         [RequireBotModerationRole]
-        public Task AddWordsAndReply(string reply, params string[] words)
+        public Task AddWordsAndReply([Summary("One word reply")] string reply, [Summary("Many words for replied, split them by '/'")] params string[] words)
         {
             if (_verificator.IsValid("wordsearch", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {
@@ -42,7 +42,7 @@ namespace DiscordBotHandler.Function.Modules.WordSearch
         [Command("addReplyCache")]
         [Summary("Adding replies cache")]
         [RequireBotModerationRole]
-        public Task AddReplyCache(params string[] reply)
+        public Task AddReplyCache([Summary("Many words reply")]  params string[] reply)
         {
             if (_verificator.IsValid("wordsearch", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {
@@ -64,7 +64,7 @@ namespace DiscordBotHandler.Function.Modules.WordSearch
         [Command("addWordCache")]
         [Summary("Adding words cache")]
         [RequireBotModerationRole]
-        public Task AddWordCache(params string[] words)
+        public Task AddWordCache([Summary("Many words for replied, split them by '/'")]params string[] words)
         {
             if (_verificator.IsValid("wordsearch", Context.Guild.Id, Context.Channel.Id, out string debugString))
             {

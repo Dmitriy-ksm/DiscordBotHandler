@@ -36,7 +36,7 @@ namespace DiscordBotHandler.Function.Modules.Dota
         }
         [Command("gameById")]
         [Summary("Getting game history")]
-        public async Task GetDotaInfoes(ulong matchId)
+        public async Task GetDotaInfoes([Summary("MatchId for which you need to pull the data now")] ulong matchId)
         {
             //string debugString;
             if (_verificator.IsValid("dota", Context.Guild.Id, Context.Channel.Id, out string debugString))
@@ -57,7 +57,7 @@ namespace DiscordBotHandler.Function.Modules.Dota
         }
         [Command("game")]
         [Summary("Getting game history")]
-        public async Task GetDotaInfoes([Summary("The (optional) user to get info from")] SocketUser user = null)
+        public async Task GetDotaInfoes([Summary("The (optional) user to get info from, else receives data from the sender of the message")] SocketUser user = null)
         {
             //string debugString;
             if (_verificator.IsValid("dota", Context.Guild.Id, Context.Channel.Id, out string debugString))

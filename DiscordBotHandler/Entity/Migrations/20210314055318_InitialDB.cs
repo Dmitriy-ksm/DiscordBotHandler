@@ -102,16 +102,6 @@ namespace DiscordBotHandler.Entity.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "CryptoInfo",
-                columns: new[] { "Id", "EthBtc", "EthBtcTime", "EthUsd", "EthUsdTime", "GasAvarage" },
-                values: new object[] { 1, 0.03082, "1615587672", 1762.8, "1615587672", 162 });
-
-            migrationBuilder.InsertData(
-                table: "UserInfos",
-                columns: new[] { "Id", "SteamId" },
-                values: new object[] { 228937227210719232ul, 76561198064401017ul });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Channels_GuildId",
                 table: "Channels",

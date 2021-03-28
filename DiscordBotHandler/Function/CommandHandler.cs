@@ -26,7 +26,7 @@ namespace DiscordBotHandler.Function
         private readonly CommandService _commands;
         private readonly ILogger _log;
         private readonly IWordSearch _wordSearch;
-
+        private readonly ICooldown _cooldown;
         private readonly IServiceProvider _services;
 
         public CommandHandler(IServiceProvider services)
@@ -36,6 +36,7 @@ namespace DiscordBotHandler.Function
             _commands = services.GetRequiredService<CommandService>();
             _log = services.GetRequiredService<ILogger>();
             _wordSearch = services.GetRequiredService<IWordSearch>();
+            _cooldown = services.GetRequiredService<ICooldown>();
         }
         public async Task InitializeAsync()
         {
@@ -71,7 +72,8 @@ namespace DiscordBotHandler.Function
             if (message == null || message.Author.IsBot)
                 return;
             var context = new SocketCommandContext(_client, message);
-            string reply = _wordSearch.SearchWord(context.Guild.Id, msg.Content);
+            string reply = _cooldown.Check("wordsearch") ? _wordSearch.SearchWord(context.Guild.Id, msg.Content) : null;
+           
             if (reply != null)
             {
                 message.Channel.SendMessageAsync(reply);

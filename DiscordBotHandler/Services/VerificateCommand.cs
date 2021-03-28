@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
-    public class VerificateCommand : IVerificateCommand
+    class VerificateCommand : IVerificateCommand
     {
         private EFContext _db;
         public VerificateCommand(EFContext db)

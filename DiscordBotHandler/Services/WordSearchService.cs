@@ -27,7 +27,7 @@ namespace DiscordBotHandler.Services
                     string[] search = item.Words.Split("/", StringSplitOptions.RemoveEmptyEntries);
                     foreach (var word in search)
                     {
-                        if (text.ToLower().Contains(word.ToLower()))
+                        if (text.ToLower().StartsWith(word.ToLower()))
                         {
                             return item.Reply;
                         }
