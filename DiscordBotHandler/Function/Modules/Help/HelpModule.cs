@@ -1,6 +1,8 @@
 ﻿using Discord.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,22 +18,36 @@ namespace DiscordBotHandler.Function.Modules.Help
         }
         [Command("help")]
         [Summary("Command list helper")]
-        public Task Help()
+        public Task Help([Summary("The name of the module for which you need help")] string moduleName = null)
         {
-            foreach(var item in _cmS.Modules)
+            if (moduleName == null)
             {
-                string moduleInfo = item.Name + /*" - " + item.Summary +*/ Environment.NewLine;
-                foreach(var command in item.Commands)
+                foreach (var item in _cmS.Modules)
                 {
-                    moduleInfo +="  " + command.Name + ":" + Environment.NewLine;
-                    moduleInfo+="    "+command.Summary+ Environment.NewLine;
+                    string moduleInfo = item.Name + (!string.IsNullOrEmpty(item.Summary) ? " - " + item.Summary : "") + Environment.NewLine;
+                    moduleInfo += Environment.NewLine;
+                    ReplyAsync(moduleInfo);
+                }
+            }
+            else
+            {
+                var item = _cmS.Modules.FirstOrDefault(m => m.Name.ToLower() == moduleName.ToLower());
+                if(item == null)
+                {
+                    ReplyAsync("Module not found");
+                }
+                string moduleInfo = item.Name + (!string.IsNullOrEmpty(item.Summary) ? " - " + item.Summary : "") + Environment.NewLine;
+                foreach (var command in item.Commands)
+                {
+                    moduleInfo += "  " + command.Name + ":" + Environment.NewLine;
+                    moduleInfo += "    " + command.Summary + Environment.NewLine;
                     if (command.Parameters.Count > 0)
                     {
                         moduleInfo += "    Params:" + Environment.NewLine;
                     }
-                    foreach(var _params in command.Parameters)
+                    foreach (var _params in command.Parameters)
                     {
-                        moduleInfo += "    " + _params.Name + (!string.IsNullOrEmpty(_params.Summary) ? " - "+_params.Summary : "") + Environment.NewLine;
+                        moduleInfo += "    " + _params.Name + (!string.IsNullOrEmpty(_params.Summary) ? " - " + _params.Summary : "") + Environment.NewLine;
                     }
                 }
                 moduleInfo += Environment.NewLine;

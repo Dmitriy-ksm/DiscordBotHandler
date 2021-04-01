@@ -20,16 +20,19 @@ namespace DiscordBotHandler.Services
         public string SearchWord(ulong guildId, string text)
         {
             var wSbGidDb = _db.Guilds.Include(w => w.WordSearches).AsEnumerable().FirstOrDefault(w => w.GuildId == guildId);
-            if(wSbGidDb != null)
+            if (wSbGidDb != null)
             {
                 foreach (var item in wSbGidDb.WordSearches)
                 {
                     string[] search = item.Words.Split("/", StringSplitOptions.RemoveEmptyEntries);
                     foreach (var word in search)
                     {
-                        if (text.ToLower().StartsWith(word.ToLower()))
+                        foreach (var wordText in text.Split(new char[] { ' ', '.', ',', '!', '?' }, StringSplitOptions.RemoveEmptyEntries))
                         {
-                            return item.Reply;
+                            if (wordText.ToLower().StartsWith(word.ToLower()))
+                            {
+                                return item.Reply;
+                            }
                         }
                     }
                 }
@@ -38,25 +41,16 @@ namespace DiscordBotHandler.Services
         }
         public void AddSearchWord(ulong guildId, string reply, params string[] search)
         {
-            /*var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == guildId);
-            if(guildDb == null)
-            {
-                guildDb = new Guilds()
-                {
-                    GuildId = guildId
-                };
-                _db.Guilds.Add(guildDb);
-            }*/
             var wordSearchesByGuildsDb = _db.Guilds.Include(w => w.WordSearches).AsEnumerable().FirstOrDefault(w => w.GuildId == guildId);
-            if(wordSearchesByGuildsDb == null)
+            if (wordSearchesByGuildsDb == null)
             {
                 var searchDb = new WordSearch()
                 {
                     Reply = reply,
                     Words = string.Join(" ", search)
                 };
-                wordSearchesByGuildsDb = new Guilds() 
-                { 
+                wordSearchesByGuildsDb = new Guilds()
+                {
                     GuildId = guildId,
                     WordSearches = new List<WordSearch>() { searchDb }
                 };
@@ -65,7 +59,7 @@ namespace DiscordBotHandler.Services
             else
             {
                 var searchDb = wordSearchesByGuildsDb.WordSearches.FirstOrDefault(w => w.Reply == reply);
-                if(searchDb == null)
+                if (searchDb == null)
                 {
                     searchDb = new WordSearch()
                     {

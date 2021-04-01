@@ -18,20 +18,20 @@ namespace DiscordBotHandler.Function.Modules.CommandManager
         }
 
         [Command("set")]
-        [Summary("Set access to a specific command for a channel")]
+        [Summary("Set access to a specific commandModule for a channel(use 'all' to set permit for all module at once)")]
         [RequireBotModerationRole]
-        public Task SetCommand(string command)
+        public Task SetCommand(string commandModule)
         {
-            _verifactor.SetPermit(command, Context.Guild.Id, Context.Channel.Id);
+            _verifactor.SetPermit(commandModule.ToLower(), Context.Guild.Id, Context.Channel.Id);
             return Task.CompletedTask;
         }
 
         [Command("unset")]
-        [Summary("Unset access to a specific command for a channel")]
+        [Summary("Unset access to a specific commandModule for a channel")]
         [RequireBotModerationRole]
-        public Task UnsetCommand(string command)
+        public Task UnsetCommand(string commandModule)
         {
-            _verifactor.UnsetPermit(command, Context.Guild.Id, Context.Channel.Id);
+            _verifactor.UnsetPermit(commandModule.ToLower(), Context.Guild.Id, Context.Channel.Id);
             return Task.CompletedTask;
         }
     }

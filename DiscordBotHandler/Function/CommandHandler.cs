@@ -44,7 +44,6 @@ namespace DiscordBotHandler.Function
             _commands.CommandExecuted += CommandExecutedAsync;
             _client.MessageReceived += MessageReceived;
             _client.Log += Log;
-            //await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
@@ -61,7 +60,6 @@ namespace DiscordBotHandler.Function
 
             // the command failed, let's notify the user that something happened.
             _log.LogMessage($"error: {result}");
-            //await context.Channel.SendMessageAsync($"error: {result}");
         }
 
         public async Task MessageReceived(SocketMessage msg)
@@ -83,7 +81,6 @@ namespace DiscordBotHandler.Function
             if (!(message.HasCharPrefix('!', ref argPos) ||
                     message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
                 return;
-            //var user = message.Author;
             await _commands.ExecuteAsync(context, argPos, _services);
         }
         public async Task<Task> Log(LogMessage msg)
