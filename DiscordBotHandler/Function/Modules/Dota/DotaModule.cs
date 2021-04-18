@@ -1,18 +1,12 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBotHandler.Entity.Data;
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Dota

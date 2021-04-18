@@ -1,9 +1,6 @@
 ﻿using DiscordBotHandler.Interfaces;
 using SixLabors.ImageSharp;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace DiscordBotHandler.Services
 {

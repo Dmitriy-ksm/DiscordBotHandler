@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiscordBotHandler.Interfaces
+﻿namespace DiscordBotHandler.Interfaces
 {
-     public interface IPlayer
+    public interface IPlayer
     {
         public void JoinChannel(ulong guildId, ulong channel);
         public void LeaveChannel(ulong guildId, ulong channel);

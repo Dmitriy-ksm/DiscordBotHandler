@@ -5,16 +5,12 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
 using SixLabors.ImageSharp.Drawing;
-using SixLabors.Fonts;
 using SystemFonts = SixLabors.Fonts.SystemFonts;
 using FontStyle = SixLabors.Fonts.FontStyle;
 using System.IO;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using System.Runtime.Serialization.Formatters;
 
 namespace DiscordBotHandler.Services
 {

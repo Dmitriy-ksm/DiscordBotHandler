@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace DiscordBotHandler.Services

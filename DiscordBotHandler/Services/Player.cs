@@ -4,16 +4,11 @@ using Lavalink4NET;
 using Lavalink4NET.DiscordNet;
 using Lavalink4NET.Events;
 using Lavalink4NET.Logging;
-using Lavalink4NET.Payloads.Player;
 using Lavalink4NET.Player;
-using Lavalink4NET.Rest;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services

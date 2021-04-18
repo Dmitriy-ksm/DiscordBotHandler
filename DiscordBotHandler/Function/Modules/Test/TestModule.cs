@@ -1,9 +1,5 @@
 ﻿using Discord.Commands;
 using DiscordBotHandler.Interfaces;
-using DiscordBotHandler.Logger;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Test
