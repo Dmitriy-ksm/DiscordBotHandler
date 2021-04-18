@@ -2,27 +2,19 @@
 using System.Threading.Tasks;
 using Discord;
 using System.Configuration;
-using System.IO;
 using Discord.WebSocket;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using DiscordBotHandler.Function;
 using Discord.Commands;
-using SteamWebAPI2.Utilities;
-using SteamWebAPI2.Interfaces;
 using System.Net.Http;
-using SteamWebAPI2.Mappings;
 using DiscordBotHandler.Services;
-using DiscordBotHandler.Logger;
 using DiscordBotHandler.Entity.Data;
 using System.Reflection;
-using DiscordBotHandler.Function.Modules.Dota;
 using DiscordBotHandler.Interfaces;
 using System.Text.Json;
-using System.Threading;
 using System.Timers;
-using SixLabors.ImageSharp;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace DiscordBotHandler

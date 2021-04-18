@@ -1,5 +1,4 @@
-﻿//using Discord;
-using DiscordBotHandler.Interfaces;
+﻿using DiscordBotHandler.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -13,7 +12,6 @@ using SixLabors.ImageSharp.Drawing;
 using SixLabors.Fonts;
 using SystemFonts = SixLabors.Fonts.SystemFonts;
 using FontStyle = SixLabors.Fonts.FontStyle;
-using Steam.Models.DOTA2;
 using System.IO;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Runtime.Serialization.Formatters;
@@ -91,7 +89,7 @@ namespace DiscordBotHandler.Services
                     var font = SystemFonts.CreateFont("Arial", 18, FontStyle.Regular);
                     var fontHeader = SystemFonts.CreateFont("Arial", 36, FontStyle.Regular);
                     using Image<Rgba32> header = new Image<Rgba32>(Size.fullWidth, Size.headerHeight);
-                    header.Mutate(o => o.DrawText(matchDota.RadiantWin ? " Radiant win " : " Dire win ", fontHeader, Color.White, new PointF(Size.fullWidth / 2 - 100, 0)));
+                    header.Mutate(o => o.DrawText(matchDota.RadiantScore+"   "+(matchDota.RadiantWin ? " Radiant win " : " Dire win ") + "   " + matchDota.DireScore, fontHeader, Color.White, new PointF(Size.fullWidth / 2 - 200, 0)));
                     using Image<Rgba32> midle = new Image<Rgba32>(Size.fullWidth, Size.heroesColumnHeight);
                     List<Image<Rgba32>> heroColumns = new List<Image<Rgba32>>();
                     foreach (var heroes in matchDota.Players)
@@ -157,6 +155,17 @@ namespace DiscordBotHandler.Services
                                 Color.White,
                                 new PointF(Size.heroesColumnIndent, Size.heroPortraitHeight + Size.itemColumnHeight + Size.fontHeight * 7))
                             );
+
+                        if (matchDota.PlayerId - 76561197960265728 == heroes.AccountId)
+                        {
+                            hero.Mutate(o => o.DrawPolygon(new Pen(Color.Red, 3), 
+                                new PointF[] { 
+                                    new PointF { X = 0, Y = 0 }, 
+                                    new PointF { X = 0, Y = hero.Height-1 },
+                                    new PointF { X = hero.Width-1, Y = hero.Height-1 }, 
+                                    new PointF { X = hero.Width-1, Y = 0 } 
+                                }));
+                        }
                         heroColumns.Add(hero);
                     }
                     outputImage.Mutate(o => o.BackgroundColor(Color.Black)

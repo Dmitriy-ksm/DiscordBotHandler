@@ -1,7 +1,9 @@
-﻿using DiscordBotHandler.Interfaces;
-using Steam.Models.DOTA2;
-using SteamWebAPI2.Interfaces;
-using SteamWebAPI2.Utilities;
+﻿extern alias SteamWebAPI2Custom;
+extern alias SteamModelsCustom;
+using DiscordBotHandler.Interfaces;
+using SteamModelsCustom::Steam.Models.DOTA2;
+using SteamWebAPI2Custom::SteamWebAPI2.Interfaces;
+using SteamWebAPI2Custom::SteamWebAPI2.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -87,7 +89,7 @@ namespace DiscordBotHandler.Services
             if (response.Data.Matches != null)
             {
                 var Match = response.Data.Matches.First();
-                return await GetDota(Match.MatchId);
+                return await GetDota(Match.MatchId, accountId);
             }
             return null;
         }
@@ -99,13 +101,14 @@ namespace DiscordBotHandler.Services
         {
             Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
         }
-        public async Task<DotaGameResult> GetDota(ulong matchId)
+        public async Task<DotaGameResult> GetDota(ulong matchId, ulong accountId = 0)
         {
             var responseFull = await dotaInterface.GetMatchDetailsAsync(matchId);
             var MatchDetails = responseFull.Data;
             var Players = MatchDetails.Players.AsEnumerable();
             DotaGameResult returnValue = new DotaGameResult()
             {
+                PlayerId = accountId,
                 MatchId = matchId,
                 RadiantWin = MatchDetails.RadiantWin,
                 Duration = MatchDetails.Duration,
@@ -115,9 +118,11 @@ namespace DiscordBotHandler.Services
                 TowerStatesRadiant = MatchDetails.TowerStatesRadiant,
                 PicksAndBans = new List<HeroesPick>(),
                 Players = new List<DotaPlayer>(),
-                StartTime = MatchDetails.StartTime
+                StartTime = MatchDetails.StartTime,
+                RadiantScore = MatchDetails.RadiantScore,
+                DireScore = MatchDetails.DireScore
             };
-            foreach(var pb in MatchDetails.PicksAndBans)
+            foreach (var pb in MatchDetails.PicksAndBans)
             {
                 var hero = Heroes.FirstOrDefault((h) => h.Id == pb.HeroId);
                 returnValue.PicksAndBans.Add(new HeroesPick()
@@ -187,6 +192,12 @@ namespace DiscordBotHandler.Services
                             Slot=5,
                             ItemName =  Items.FirstOrDefault(i => i.Id == player.Item5).LocalizedName,
                             ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item5).Name.Replace("item_", "")+"_lg.png"
+                        }:new DotaItems(),
+                          player.ItemNeutral != 0 ?    new DotaItems(){
+                            ItemId=player.ItemNeutral,
+                            Slot=6,
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.ItemNeutral).LocalizedName,
+                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.ItemNeutral).Name.Replace("item_", "")+"_lg.png"
                         }:new DotaItems()
                               /*new DotaItems(){
                             ItemId=player.Item0,

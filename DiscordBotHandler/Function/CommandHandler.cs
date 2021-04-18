@@ -2,19 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using DiscordBotHandler.Logger;
-using System.Configuration;
-using System.Linq;
-using SteamWebAPI2.Interfaces;
-using Steam.Models.DOTA2;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Text.Json;
-using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
 using DiscordBotHandler.Interfaces;
 

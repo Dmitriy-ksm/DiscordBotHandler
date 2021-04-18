@@ -1,4 +1,5 @@
-﻿using Steam.Models.DOTA2;
+﻿extern alias SteamModelsCustom;
+using SteamModelsCustom::Steam.Models.DOTA2;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,9 +17,12 @@ namespace DiscordBotHandler.Interfaces
     }
     public class DotaGameResult
     {
+        public ulong PlayerId;
         public ulong MatchId;
         public DateTime StartTime;
         public bool RadiantWin;
+        public uint RadiantScore;
+        public uint DireScore;
         public uint Duration;
         public TowerState TowerStatesDire;
         public BarracksState BarracksStatesRadiant;

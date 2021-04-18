@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Discord.Net" Version="2.3.1" />
     <PackageReference Include="Lavalink4NET.Discord.NET" Version="1.6.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
@@ -49,12 +50,26 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
     <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.2" />
     <PackageReference Include="SixLabors.Shapes" Version="1.0.0-beta0009" />
-    <PackageReference Include="SteamWebAPI2" Version="4.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Steam.Models">
+      <HintPath>..\..\dll\Steam.Models.dll</HintPath>
+      <Aliases>SteamModelsCustom</Aliases>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="SteamWebAPI2">
+      <HintPath>..\..\dll\SteamWebAPI2.dll</HintPath>
+      <Aliases>SteamWebAPI2Custom</Aliases>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

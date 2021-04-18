@@ -9,6 +9,7 @@ namespace DiscordBotHandler.Services
 {
     class ItemImageProvider : IStorageProvider<Image>
     {
+        private static bool useCloudflare = true;
         public Image GetObject(params object[] obj)
         {
             if (obj.Length < 1)
@@ -19,7 +20,7 @@ namespace DiscordBotHandler.Services
             {
 
                 string itemName = obj[0].ToString();
-                var itemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/" + itemName.Replace("item_", "") + "_lg.png";
+                var itemImageUrl = useCloudflare ? @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images//items/" + itemName.Replace("item_", "") + "_lg.png" : @"http://cdn.dota2.com/apps/dota2/images/items/" + itemName.Replace("item_", "") + "_lg.png";
                 var requestItem = WebRequest.Create(itemImageUrl);
 
                 using (var responseItem = requestItem.GetResponse())
