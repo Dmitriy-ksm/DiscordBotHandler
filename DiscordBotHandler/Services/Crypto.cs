@@ -2,13 +2,10 @@
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -24,13 +21,7 @@ namespace DiscordBotHandler.Services
         public async Task<string> GetCryptoInfoAsync()
         {
             var newCrypto = await getEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
-            //string directory = ConfigurationManager.AppSettings["CryptoContainter"];
             var result = "Текущийкурс Ether: " + newCrypto.EthUsd + "$" + Environment.NewLine;
-            /*if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            string lastCrypto = Path.Combine(directory, "crypto.txt");*/
             var lastCryptoDataDb = _dbContext.CryptoInfo.AsQueryable().OrderByDescending(x => x.Id).FirstOrDefault();
             EtherGasBotData lastCryptoData = null;
             if (lastCryptoDataDb != null)
@@ -53,30 +44,6 @@ namespace DiscordBotHandler.Services
             };
 
             _dbContext.CryptoInfo.Add(cryptoInfoNew);
-            /*if (!File.Exists(lastCrypto))
-            {
-                File.Create(lastCrypto);
-            }
-            else
-            {
-                using (StreamReader reader = new StreamReader(lastCrypto))
-                {
-                    var file = reader.ReadToEnd();
-                    try
-                    {
-                        lastCryptoData = JsonSerializer.Deserialize<EtherGasBotData>(file);
-                    }
-                    catch
-                    {
-                        result += "Данных прошлой сессии не найдено" + Environment.NewLine;
-                    }
-                }
-            }
-            using (StreamWriter writer = new StreamWriter(lastCrypto))
-            {
-                var jsonString = JsonSerializer.Serialize(newCrypto);
-                writer.Write(jsonString);
-            }*/
             await _dbContext.SaveChangesAsync();
             if (lastCryptoData != null)
             {

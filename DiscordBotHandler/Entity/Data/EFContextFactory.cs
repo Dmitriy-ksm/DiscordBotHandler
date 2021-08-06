@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Text;
 
 namespace DiscordBotHandler.Entity.Data
 {

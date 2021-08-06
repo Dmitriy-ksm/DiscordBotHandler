@@ -2,11 +2,8 @@
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace DiscordBotHandler.Interfaces
 {
-    public interface IDraw 
+    public interface IDraw<T>
     {
-        public void DrawImage(object objects, MemoryStream stream);
+        public void DrawImage(T objects, MemoryStream stream);
     }
 }

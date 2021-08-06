@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Player
@@ -52,18 +51,12 @@ namespace DiscordBotHandler.Function.Modules.Player
                 }
                 _db.SaveChanges();
                 if (Channels.ContainsKey(Context.Guild.Id))
-                {
                     Channels[Context.Guild.Id] = voiceChannelId;
-                }
                 else
-                {
                     Channels.Add(Context.Guild.Id, voiceChannelId);
-                }
             }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
         [Command("addTrack")]
@@ -71,13 +64,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         public Task AddingTrack([Summary("URL to track")] string uri)
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
                 _player.AddTrack(Context.Guild.Id, uri, 1);
-            }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
 
@@ -86,13 +75,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         public Task AddingTrackList([Summary("URL to tracks list")] string uri)
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
                 _player.AddTrack(Context.Guild.Id, uri, -1);
-            }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
 
@@ -114,9 +99,7 @@ namespace DiscordBotHandler.Function.Modules.Player
                 }
             }
             else
-            {
                 _logger.LogMessage("Guild voice channel not set");
-            }
             return Task.CompletedTask;
         }
 
@@ -125,13 +108,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         public Task Pause()
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
                 _player.Pause(Context.Guild.Id);
-            }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
         [Command("resume")]
@@ -139,13 +118,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         public Task Resume()
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
                 _player.Resume(Context.Guild.Id);
-            }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
 
@@ -154,13 +129,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         public Task Skip()
         {
             if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
                 _player.Skip(Context.Guild.Id);
-            }
             else
-            {
                 _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
 
@@ -182,9 +153,7 @@ namespace DiscordBotHandler.Function.Modules.Player
                 }
             }
             else
-            {
                 _logger.LogMessage("Guild voice channel not set");
-            }
             return Task.CompletedTask;
         }
     }

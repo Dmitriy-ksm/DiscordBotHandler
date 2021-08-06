@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DiscordBotHandler.Services
 {
@@ -38,15 +37,6 @@ namespace DiscordBotHandler.Services
         }
         public void AddSearchWord(ulong guildId, string reply, params string[] search)
         {
-            /*var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == guildId);
-            if(guildDb == null)
-            {
-                guildDb = new Guilds()
-                {
-                    GuildId = guildId
-                };
-                _db.Guilds.Add(guildDb);
-            }*/
             var wordSearchesByGuildsDb = _db.Guilds.Include(w => w.WordSearches).AsEnumerable().FirstOrDefault(w => w.GuildId == guildId);
             if(wordSearchesByGuildsDb == null)
             {
