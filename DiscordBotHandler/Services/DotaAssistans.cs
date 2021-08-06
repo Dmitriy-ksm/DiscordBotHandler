@@ -1,9 +1,7 @@
-﻿extern alias SteamWebAPI2Custom;
-extern alias SteamModelsCustom;
-using DiscordBotHandler.Interfaces;
-using SteamModelsCustom::Steam.Models.DOTA2;
-using SteamWebAPI2Custom::SteamWebAPI2.Interfaces;
-using SteamWebAPI2Custom::SteamWebAPI2.Utilities;
+﻿using DiscordBotHandler.Interfaces;
+using Steam.Models.DOTA2;
+using SteamWebAPI2.Interfaces;
+using SteamWebAPI2.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -82,12 +80,11 @@ namespace DiscordBotHandler.Services
         }
         public async Task<DotaGameResult> GetDotaAsync(ulong accountId)
         {
-            var accountId32b = accountId - 76561197960265728;
             var response = await dotaInterface.GetMatchHistoryAsync(accountId: accountId, matchesRequested: "1");
             if (response.Data.Matches != null)
             {
                 var Match = response.Data.Matches.First();
-                return await GetDota(Match.MatchId, accountId);
+                return await GetDota(Match.MatchId);
             }
             return null;
         }
@@ -99,14 +96,13 @@ namespace DiscordBotHandler.Services
         {
             Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
         }
-        public async Task<DotaGameResult> GetDota(ulong matchId, ulong accountId = 0)
+        public async Task<DotaGameResult> GetDota(ulong matchId)
         {
             var responseFull = await dotaInterface.GetMatchDetailsAsync(matchId);
             var MatchDetails = responseFull.Data;
             var Players = MatchDetails.Players.AsEnumerable();
             DotaGameResult returnValue = new DotaGameResult()
             {
-                PlayerId = accountId,
                 MatchId = matchId,
                 RadiantWin = MatchDetails.RadiantWin,
                 Duration = MatchDetails.Duration,
@@ -116,11 +112,9 @@ namespace DiscordBotHandler.Services
                 TowerStatesRadiant = MatchDetails.TowerStatesRadiant,
                 PicksAndBans = new List<HeroesPick>(),
                 Players = new List<DotaPlayer>(),
-                StartTime = MatchDetails.StartTime,
-                RadiantScore = MatchDetails.RadiantScore,
-                DireScore = MatchDetails.DireScore
+                StartTime = MatchDetails.StartTime
             };
-            foreach (var pb in MatchDetails.PicksAndBans)
+            foreach(var pb in MatchDetails.PicksAndBans)
             {
                 var hero = Heroes.FirstOrDefault((h) => h.Id == pb.HeroId);
                 returnValue.PicksAndBans.Add(new HeroesPick()
@@ -129,7 +123,6 @@ namespace DiscordBotHandler.Services
                     Order = pb.Order,
                     Team = pb.Team,
                     HeroId = hero.Id,
-                    HeroImageUrl = @"http://cdn.dota2.com/apps/dota2/images/heroes/" + hero.Name.Replace("npc_dota_hero_", "") + "_full.png",
                     HeroName = hero.LocalizedName
                 });
             }
@@ -141,7 +134,6 @@ namespace DiscordBotHandler.Services
                     AccountId = player.AccountId,
                     HeroId = player.HeroId,
                     HeroName = hero.LocalizedName,
-                    HeroImageUrl = @"http://cdn.dota2.com/apps/dota2/images/heroes/" + hero.Name.Replace("npc_dota_hero_", "") + "_full.png",
                     Level = player.Level,
                     Kills = player.Kills,
                     Deaths = player.Deaths,
@@ -155,54 +147,48 @@ namespace DiscordBotHandler.Services
                     HeroHealing = player.HeroHealing,
                     TowerDamage = player.TowerDamage,
                     Items = new List<DotaItems>() {
+
                         player.Item0 != 0 ? new DotaItems(){
                             ItemId=player.Item0,
                             Slot=0,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item0).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item0).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item0).LocalizedName
                         }:new DotaItems(),
+
                         player.Item1 != 0 ?  new DotaItems(){
                             ItemId=player.Item1,
                             Slot=1,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item1).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item1).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item1).LocalizedName
                         }:new DotaItems(),
+
                          player.Item2 != 0 ?  new DotaItems(){
                             ItemId=player.Item2,
                             Slot=2,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item2).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item2).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item2).LocalizedName
                         }:new DotaItems(),
+
                          player.Item3 != 0 ?   new DotaItems(){
                             ItemId=player.Item3,
                             Slot=3,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item3).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item3).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item3).LocalizedName
                         }:new DotaItems(),
+
                          player.Item4 != 0 ?    new DotaItems(){
                             ItemId=player.Item4,
                             Slot=4,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item4).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item4).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item4).LocalizedName
                         }:new DotaItems(),
+
                           player.Item5 != 0 ?    new DotaItems(){
                             ItemId=player.Item5,
                             Slot=5,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item5).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item5).Name.Replace("item_", "")+"_lg.png"
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item5).LocalizedName
                         }:new DotaItems(),
-                          player.ItemNeutral != 0 ?    new DotaItems(){
+
+                          player.ItemNeutral != 0 ? new DotaItems(){
                             ItemId=player.ItemNeutral,
                             Slot=6,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.ItemNeutral).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.ItemNeutral).Name.Replace("item_", "")+"_lg.png"
-                        }:new DotaItems()
-                              /*new DotaItems(){
-                            ItemId=player.Item0,
-                            Slot=0,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item0).LocalizedName,
-                            ItemImageUrl = @"http://cdn.dota2.com/apps/dota2/images/items/"+Items.FirstOrDefault(i=>i.Id==player.Item0).Name.Replace("item_", "")+"_lg.png"
-                        }*/
+                            ItemName =  Items.FirstOrDefault(i => i.Id == player.ItemNeutral).LocalizedName
+                        }: new DotaItems()
                     }
                 });
             }

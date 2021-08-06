@@ -1,7 +1,7 @@
 ﻿using Discord.Commands;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace DiscordBotHandler.Function.Modules.Help
 {
@@ -15,41 +15,42 @@ namespace DiscordBotHandler.Function.Modules.Help
         }
         [Command("help")]
         [Summary("Command list helper")]
-        public Task Help([Summary("The name of the module for which you need help")] string moduleName = null)
+        public Task Help([Summary("Module Name")] string moduleName = null)
         {
-            if (moduleName == null)
+            string moduleInfo = string.Empty;
+            if (moduleName != null && moduleName.Trim().Length > 0)
             {
-                foreach (var item in _cmS.Modules)
+                var module = _cmS.Modules.First(i => i.Name == moduleName);
+                if (module != null)
                 {
-                    string moduleInfo = item.Name + (!string.IsNullOrEmpty(item.Summary) ? " - " + item.Summary : "") + Environment.NewLine;
-                    moduleInfo += Environment.NewLine;
-                    ReplyAsync(moduleInfo);
+                    foreach (var command in module.Commands)
+                    {
+                        moduleInfo += "  " + command.Name + ":" + Environment.NewLine;
+                        moduleInfo += "    " + command.Summary + Environment.NewLine;
+                        if (command.Parameters.Count > 0)
+                        {
+                            moduleInfo += "    Params:" + Environment.NewLine;
+                        }
+                        foreach (var _params in command.Parameters)
+                        {
+                            moduleInfo += "    " + _params.Name + (!string.IsNullOrEmpty(_params.Summary) ? " - " + _params.Summary : "") + Environment.NewLine;
+                        }
+                    }
+                }
+                else
+                {
+                    moduleInfo = $"Not Found {moduleName}";
                 }
             }
             else
             {
-                var item = _cmS.Modules.FirstOrDefault(m => m.Name.ToLower() == moduleName.ToLower());
-                if(item == null)
+                foreach (var item in _cmS.Modules)
                 {
-                    ReplyAsync("Module not found");
+                    moduleInfo += item.Name + /*" - " + item.Summary +*/ Environment.NewLine;
+                    moduleInfo += Environment.NewLine;
                 }
-                string moduleInfo = item.Name + (!string.IsNullOrEmpty(item.Summary) ? " - " + item.Summary : "") + Environment.NewLine;
-                foreach (var command in item.Commands)
-                {
-                    moduleInfo += "  " + command.Name + ":" + Environment.NewLine;
-                    moduleInfo += "    " + command.Summary + Environment.NewLine;
-                    if (command.Parameters.Count > 0)
-                    {
-                        moduleInfo += "    Params:" + Environment.NewLine;
-                    }
-                    foreach (var _params in command.Parameters)
-                    {
-                        moduleInfo += "    " + _params.Name + (!string.IsNullOrEmpty(_params.Summary) ? " - " + _params.Summary : "") + Environment.NewLine;
-                    }
-                }
-                moduleInfo += Environment.NewLine;
-                ReplyAsync(moduleInfo);
             }
+            ReplyAsync(moduleInfo);
             return Task.CompletedTask;
         }
     }

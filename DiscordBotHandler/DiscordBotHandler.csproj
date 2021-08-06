@@ -17,64 +17,55 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Services\Base\StorageProviderBase.cs" />
     <Compile Include="Services\CoolDown.cs" />
     <Compile Include="Services\Crypto.cs" />
     <Compile Include="Services\DotaAssistans.cs" />
     <Compile Include="Services\DotaImageDraw.cs" />
-    <Compile Include="Services\HeroImageProvider.cs" />
+    <Compile Include="Services\Base\DotaObjectImageProvider.cs" />
     <Compile Include="Services\ImageStorageItem.cs" />
     <Compile Include="Services\ImageStorageHero.cs" />
-    <Compile Include="Services\ItemImageProvider.cs" />
+    <Compile Include="Services\LoggerConsole.cs" />
+    <Compile Include="Services\LoggerEmpty.cs" />
     <Compile Include="Services\Logger.cs" />
+    <Compile Include="Services\PlayerEmpty.cs" />
     <Compile Include="Services\Player.cs" />
     <Compile Include="Services\VerificateCommand.cs" />
     <Compile Include="Services\WordSearchService.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Discord.Net" Version="2.3.1" />
-    <PackageReference Include="Lavalink4NET.Discord.NET" Version="1.6.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
+    <PackageReference Include="Discord.Net" Version="2.4.0" />
+    <PackageReference Include="Lavalink4NET.Discord.NET" Version="1.7.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
-    <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.3" />
     <PackageReference Include="SixLabors.Shapes" Version="1.0.0-beta0009" />
+    <PackageReference Include="SteamWebAPI2" Version="4.3.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Steam.Models">
-      <HintPath>..\..\dll\Steam.Models.dll</HintPath>
-      <Aliases>SteamModelsCustom</Aliases>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="SteamWebAPI2">
-      <HintPath>..\..\dll\SteamWebAPI2.dll</HintPath>
-      <Aliases>SteamWebAPI2Custom</Aliases>
-      <Private>true</Private>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="App.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="BotDatabase.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Connect.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

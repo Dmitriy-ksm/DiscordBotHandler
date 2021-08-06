@@ -1,5 +1,4 @@
-﻿extern alias SteamModelsCustom;
-using SteamModelsCustom::Steam.Models.DOTA2;
+﻿using Steam.Models.DOTA2;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,14 +13,13 @@ namespace DiscordBotHandler.Interfaces
         public Task<DotaGameResult> GetDotaAsync(ulong accountId);
         public Task<DotaGameResult> GetDotaByMatchIdAsync(ulong matchId);
     }
+    public class DotaGameResult<TDotaGameResult> : DotaGameResult { }
     public class DotaGameResult
     {
-        public ulong PlayerId;
+        public ulong? PlayerId;
         public ulong MatchId;
         public DateTime StartTime;
         public bool RadiantWin;
-        public uint RadiantScore;
-        public uint DireScore;
         public uint Duration;
         public TowerState TowerStatesDire;
         public BarracksState BarracksStatesRadiant;
@@ -29,36 +27,12 @@ namespace DiscordBotHandler.Interfaces
         public TowerState TowerStatesRadiant;
         public List<HeroesPick> PicksAndBans;
         public List<DotaPlayer> Players;
-        public override string ToString()
-        {
-            var ret_val = "ID: " + MatchId + (RadiantWin ? " Radiant win " : " Dire win ") + TimeSpan.FromSeconds(Duration).ToString() + Environment.NewLine + " Heroes:";
-            foreach (var player in Players)
-            {
-                ret_val += Environment.NewLine + player.HeroName;
-
-                ret_val += Environment.NewLine + "   Уровень:" + player.Level;
-                ret_val += Environment.NewLine + "   Убийст:" + player.Kills;
-                ret_val += Environment.NewLine + "   Смертей:" + player.Deaths;
-                ret_val += Environment.NewLine + "   Ассистов:" + player.Assists;
-                ret_val += Environment.NewLine + "   Исцеление:" + player.HeroHealing;
-                ret_val += Environment.NewLine + "   Урон:" + player.HeroDamage;
-                ret_val += Environment.NewLine + "   Урон по строениям:" + player.TowerDamage;
-                ret_val += Environment.NewLine + "   Шмотки:";
-                foreach (var item in player.Items)
-                {
-                    ret_val += item.ItemId != 0 ? item.ItemName + "," : "";
-                }
-            }
-            ret_val += Environment.NewLine + " Game Time:" + StartTime.ToString();
-            return ret_val;
-        }
     }
     public class HeroesPick
     {
         public bool IsPick { get; set; }
         public uint HeroId { get; set; }
         public string HeroName { get; set; }
-        public string HeroImageUrl { get; set; }
         public uint Team { get; set; }
         public uint Order { get; set; }
     }
@@ -74,7 +48,6 @@ namespace DiscordBotHandler.Interfaces
         public uint HeroHealing { get; set; }
         public uint HeroId { get; set; }
         public string HeroName { get; set; }
-        public string HeroImageUrl { get; set; }
         public uint Denies { get; set; }
         public uint LastHits { get; set; }
         public uint NetWorth { get; set; }
@@ -86,7 +59,6 @@ namespace DiscordBotHandler.Interfaces
     {
         public uint ItemId { get; set; }
         public string ItemName { get; set; }
-        public string ItemImageUrl { get; set; }
         public uint Slot { get; set; }
     }
 }
