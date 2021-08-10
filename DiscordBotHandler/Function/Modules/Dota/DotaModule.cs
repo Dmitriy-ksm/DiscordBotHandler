@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DiscordBotHandler.Entity.Data;
 using DiscordBotHandler.Entity.Entities;
+using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -27,6 +28,35 @@ namespace DiscordBotHandler.Function.Modules.Dota
             _verificator = services.GetRequiredService<IVerificateCommand>();
             _logger = services.GetRequiredService<ILogger>();
             _draw = services.GetRequiredService<IDraw<DotaGameResult>>();
+        }
+        [Command("gameBySteamUrl")]
+        [Summary("Getting game history")]
+        public async Task GetDotaInfoes([Summary("Steam URL of the user whose game to get")] string url)
+        {
+            ulong steamId = Task.Run(async () => { return await _dota.GetSteamIdAsync(url); }).Result;
+
+            if (_verificator.IsValid("dota", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            {
+                if (steamId > 0)
+                {
+                    var res = await _dota.GetDotaAsync(steamId);
+                    res.PlayerId = steamId;
+                    using (MemoryStream imageStream = new MemoryStream())
+                    {
+                        _draw.DrawImage(res, imageStream);
+                        imageStream.Position = 0;
+                        await Context.Channel.SendFileAsync(imageStream, "Test.jpeg");
+                    }
+                }
+                else
+                {
+                    await _logger.LogMessage("Нет подходящего steamId");
+                }
+            }
+            else
+            {
+                await _logger.LogMessage(debugString);
+            }
         }
         [Command("gameById")]
         [Summary("Getting game history")]

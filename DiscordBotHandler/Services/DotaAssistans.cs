@@ -1,4 +1,5 @@
-﻿using DiscordBotHandler.Interfaces;
+﻿using DiscordBotHandler.Helpers.Dota;
+using DiscordBotHandler.Interfaces;
 using Steam.Models.DOTA2;
 using SteamWebAPI2.Interfaces;
 using SteamWebAPI2.Utilities;
@@ -128,69 +129,10 @@ namespace DiscordBotHandler.Services
             }
             foreach (var player in Players)
             {
-                var hero = Heroes.FirstOrDefault((h) => h.Id == player.HeroId);
-                returnValue.Players.Add(new DotaPlayer()
-                {
-                    AccountId = player.AccountId,
-                    HeroId = player.HeroId,
-                    HeroName = hero.LocalizedName,
-                    Level = player.Level,
-                    Kills = player.Kills,
-                    Deaths = player.Deaths,
-                    Assists = player.Assists,
-                    LastHits = player.LastHits,
-                    Denies = player.Denies,
-                    GoldPerMinute = player.GoldPerMinute,
-                    ExperiencePerMinute = player.ExperiencePerMinute,
-                    NetWorth = player.GoldSpent,
-                    HeroDamage = player.HeroDamage,
-                    HeroHealing = player.HeroHealing,
-                    TowerDamage = player.TowerDamage,
-                    Items = new List<DotaItems>() {
-
-                        player.Item0 != 0 ? new DotaItems(){
-                            ItemId=player.Item0,
-                            Slot=0,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item0).LocalizedName
-                        }:new DotaItems(),
-
-                        player.Item1 != 0 ?  new DotaItems(){
-                            ItemId=player.Item1,
-                            Slot=1,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item1).LocalizedName
-                        }:new DotaItems(),
-
-                         player.Item2 != 0 ?  new DotaItems(){
-                            ItemId=player.Item2,
-                            Slot=2,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item2).LocalizedName
-                        }:new DotaItems(),
-
-                         player.Item3 != 0 ?   new DotaItems(){
-                            ItemId=player.Item3,
-                            Slot=3,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item3).LocalizedName
-                        }:new DotaItems(),
-
-                         player.Item4 != 0 ?    new DotaItems(){
-                            ItemId=player.Item4,
-                            Slot=4,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item4).LocalizedName
-                        }:new DotaItems(),
-
-                          player.Item5 != 0 ?    new DotaItems(){
-                            ItemId=player.Item5,
-                            Slot=5,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.Item5).LocalizedName
-                        }:new DotaItems(),
-
-                          player.ItemNeutral != 0 ? new DotaItems(){
-                            ItemId=player.ItemNeutral,
-                            Slot=6,
-                            ItemName =  Items.FirstOrDefault(i => i.Id == player.ItemNeutral).LocalizedName
-                        }: new DotaItems()
-                    }
-                });
+                var dotaPlayer = DotaPlayerExtension.DefaultInitialize(player);
+                dotaPlayer.HeroName = Heroes.FirstOrDefault((h) => h.Id == player.HeroId)?.LocalizedName;
+                dotaPlayer.SetPlayerItems(player, Items);
+                returnValue.Players.Add(dotaPlayer);
             }
             return returnValue;
         }

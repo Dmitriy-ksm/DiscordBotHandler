@@ -15,6 +15,7 @@ using DiscordBotHandler.Interfaces;
 using Image = SixLabors.ImageSharp.Image;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Services.Providers;
+using DiscordBotHandler.Helpers.Dota;
 
 namespace DiscordBotHandler
 {

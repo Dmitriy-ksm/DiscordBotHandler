@@ -55,7 +55,6 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
     <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.3" />
-    <PackageReference Include="SixLabors.Shapes" Version="1.0.0-beta0009" />
     <PackageReference Include="SteamWebAPI2" Version="4.3.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
   </ItemGroup>
@@ -65,7 +64,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="BotDatabase.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Connect.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

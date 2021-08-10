@@ -45,47 +45,20 @@ namespace DiscordBotHandler.Services
 
         public void SetPermit(string command, ulong guildId, ulong channelId)
         {
-            var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == guildId);
-            if (guildDb == null)
-            {
-                guildDb = new Guilds()
-                {
-                    GuildId = guildId
-                };
-                _db.Guilds.Add(guildDb);
-            }
-            var channelDb = _db.Channels.FirstOrDefault(c => c.ChannelId == channelId);
-            if (channelDb == null)
-            {
-                channelDb = new Channels()
-                {
-                    ChannelId = channelId,
-                    GuildId = guildId,
-                };
-                _db.Channels.Add(channelDb);
-            }
-            var commandDb = _db.CommandAccesses.Include(c=>c.Channels).FirstOrDefault(c => c.Command == command);
-            if(commandDb == null)
-            {
-                commandDb = new Entity.Entities.CommandAccess()
-                {
-                    Command = command,
-                    Channels = new List<Channels>() { channelDb }
-                };
-                _db.CommandAccesses.Add(commandDb);
-            }
-            else
-            {
-                if(commandDb.Channels.FirstOrDefault(c=>c.ChannelId == channelId) == null)
-                {
-                    commandDb.Channels.Add(channelDb);
-                    _db.CommandAccesses.Update(commandDb);
-                }
-            }
+            var channelDb = CheckChannel(channelId, guildId, out _);
+            CommandManage(command, channelDb);
             _db.SaveChanges();
         }
 
         public void UnsetPermit(string command, ulong guildId, ulong channelId)
+        {
+            var channelDb = CheckChannel(channelId, guildId, out bool hasChannel);
+            if (!hasChannel)
+                CommandManage(command, channelDb, true);
+            _db.SaveChanges();
+        }
+
+        private void CheckGuild(ulong guildId)
         {
             var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == guildId);
             if (guildDb == null)
@@ -96,6 +69,11 @@ namespace DiscordBotHandler.Services
                 };
                 _db.Guilds.Add(guildDb);
             }
+        }
+
+        private Channels CheckChannel(ulong channelId, ulong guildId, out bool hasChannel)
+        {
+            CheckGuild(guildId);
             var channelDb = _db.Channels.FirstOrDefault(c => c.ChannelId == channelId);
             if (channelDb == null)
             {
@@ -105,28 +83,39 @@ namespace DiscordBotHandler.Services
                     GuildId = guildId,
                 };
                 _db.Channels.Add(channelDb);
-                return;
+                hasChannel = false;
             }
-            var commandDb = _db.CommandAccesses.Include(c=>c.Channels).FirstOrDefault(c => c.Command == command);
+            hasChannel = true;
+            return channelDb;
+        }
+
+        private void CommandManage(string command, Channels channel, bool IsRemove = false)
+        {
+            var commandDb = _db.CommandAccesses.Include(c => c.Channels).FirstOrDefault(c => c.Command == command);
             if (commandDb == null)
             {
-                commandDb = new Entity.Entities.CommandAccess()
+                commandDb = new CommandAccess()
                 {
                     Command = command,
                     Channels = new List<Channels>()
                 };
                 _db.CommandAccesses.Add(commandDb);
-                return;
             }
             else
             {
-                if (commandDb.Channels.FirstOrDefault(c => c.ChannelId == channelId) != null)
+                if (commandDb.Channels.FirstOrDefault(c => c.ChannelId == channel.ChannelId) != null)
                 {
-                    commandDb.Channels.Remove(channelDb);
+                    if (IsRemove)
+                    {
+                        commandDb.Channels.Remove(channel);
+                    }
+                    else
+                    {
+                        commandDb.Channels.Add(channel);
+                    }
                     _db.CommandAccesses.Update(commandDb);
                 }
             }
-            _db.SaveChanges();
         }
     }
 }

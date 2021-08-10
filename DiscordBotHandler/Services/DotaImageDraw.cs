@@ -13,6 +13,7 @@ using System.IO;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.Fonts;
 using DiscordBotHandler.Helpers;
+using DiscordBotHandler.Helpers.Dota;
 
 namespace DiscordBotHandler.Services
 {
@@ -40,6 +41,7 @@ namespace DiscordBotHandler.Services
             public int heroPortraitWidth;
             public int heroPortraitHeight;
             public int heroesColumnIndent;
+            public int itemBackpackSquare;
             public int itemSquare;
             public int itemHorizontalIntent;
             public int itemColumnHeight;
@@ -63,9 +65,10 @@ namespace DiscordBotHandler.Services
             heroPortraitWidth = 150,
             heroPortraitHeight = 100,
             heroesColumnIndent = (170 - 150) / 2,
+            itemBackpackSquare = 30,
             itemSquare = 65,
             itemHorizontalIntent = 15,
-            itemColumnHeight = 320,
+            itemColumnHeight = 350,
             _fontHeight = 25,
             heroStatsHeight = 225,
             footerHeight = 375,
@@ -109,9 +112,20 @@ namespace DiscordBotHandler.Services
 
                     }
                 }
+                foreach(var item in heroes.BackPacks)
+                {
+                    if(item.ItemId != 0)
+                    {
+                        using Image heroBackpackItem = _itemImageStorage.GetObject(_dota.GetItemById(item.ItemId).Name);
+
+                        heroBackpackItem.Mutate(o => o.Resize(new Size(_size.itemBackpackSquare, _size.itemBackpackSquare)));
+                        int intentWidth = _size.itemBackpackSquare * item.Slot;
+                        int intentHeight = _size.itemColumnHeight - _size.itemBackpackSquare;
+                        hero.Mutate(o => o.DrawImage(heroBackpackItem, new Point(intentWidth, intentHeight + _size.heroPortraitHeight), 1f));
+                    }
+                }
                 IPen pen = new Pen(Color.Yellow, 5);
                 hero.Mutate(o => o
-                    //.Draw(pen, (IPath)new SixLabors.Shapes.EllipsePolygon(_size.itemSquare + _size.heroesColumnIndent * 2, _size.heroPortraitHeight + _size.itemColumnHeight - (int)Math.Floor((float)_size.itemSquare / 2), (float)_size.itemSquare / 2))
                     .DrawText(heroes.Level.ToString(),
                         _font,
                         Color.Yellow,
