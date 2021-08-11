@@ -21,24 +21,16 @@ namespace DiscordBotHandler.Services
             error = "";
             var channelsForAll = _db.Channels.Include(c=>c.Commands).AsEnumerable().FirstOrDefault(c => c.GuildId== guildId && c.ChannelId == channelId && c.Commands.FirstOrDefault(com=>com.Command == "all")!=null);
             if(channelsForAll != null)
-            {
                 isValid = true;
-            }
             else
             {
                 var commandDb = _db.CommandAccesses.Include(c => c.Channels).FirstOrDefault(c => c.Command == command);
                 if (commandDb == null)
-                {
                     error = "Команда не настроенна!";
-                }
                 else if (commandDb.Channels.FirstOrDefault(c => c.ChannelId == channelId) == null)
-                {
                     error = "Команда не разрещенна для этого канала!";
-                }
                 else
-                {
                     isValid = true;
-                }
             }
             return isValid;
         }
@@ -53,7 +45,7 @@ namespace DiscordBotHandler.Services
         public void UnsetPermit(string command, ulong guildId, ulong channelId)
         {
             var channelDb = CheckChannel(channelId, guildId, out bool hasChannel);
-            if (!hasChannel)
+            if (hasChannel)
                 CommandManage(command, channelDb, true);
             _db.SaveChanges();
         }
@@ -63,10 +55,7 @@ namespace DiscordBotHandler.Services
             var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == guildId);
             if (guildDb == null)
             {
-                guildDb = new Guilds()
-                {
-                    GuildId = guildId
-                };
+                guildDb = new Guilds(){ GuildId = guildId };
                 _db.Guilds.Add(guildDb);
             }
         }
@@ -103,18 +92,26 @@ namespace DiscordBotHandler.Services
             }
             else
             {
-                if (commandDb.Channels.FirstOrDefault(c => c.ChannelId == channel.ChannelId) != null)
+                if(command == "all")
                 {
-                    if (IsRemove)
+                    channel.Commands = new List<CommandAccess>();
+                    if (!IsRemove)
                     {
-                        commandDb.Channels.Remove(channel);
+                        channel.Commands.Add(commandDb);
+                    }
+                }
+                else
+                {
+                    if (commandDb.Channels.FirstOrDefault(c => c.ChannelId == channel.ChannelId) != null)
+                    {
+                        if (IsRemove)
+                            commandDb.Channels.Remove(channel);
                     }
                     else
-                    {
                         commandDb.Channels.Add(channel);
-                    }
-                    _db.CommandAccesses.Update(commandDb);
                 }
+
+                _db.CommandAccesses.Update(commandDb);
             }
         }
     }

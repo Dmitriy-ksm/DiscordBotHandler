@@ -7,25 +7,27 @@ namespace DiscordBotHandler.Logger
 {
     class Logger : ILogger
     {
-        string log_file;
-        public Logger()
-        {
-            string directory = "log";
-            if (!Directory.Exists(directory))
+        const string directory = "log";
+        string _logFile;
+        string LogFile {
+            get
             {
-                Directory.CreateDirectory(directory);
-            }
-            string log_file_name = (DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + ".log";
-            log_file = Path.Combine(directory, log_file_name);
-            if (!File.Exists(log_file))
-            {
-                File.Create(log_file);
+                if (_logFile == null)
+                {
+                    _logFile = Path.Combine(directory,
+                           (DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + ".log");
+
+                    if (!Directory.Exists(directory))
+                        Directory.CreateDirectory(directory);
+                    if (!File.Exists(_logFile))
+                        File.Create(_logFile);
+                } 
+                return _logFile;
             }
         }
         public async Task<Task> LogMessage(string message)
         {
-            //Console.WriteLine(message);
-            using (StreamWriter sw = File.AppendText(log_file))
+            using (StreamWriter sw = File.AppendText(LogFile))
             {
                 await sw.WriteLineAsync(message);
             }

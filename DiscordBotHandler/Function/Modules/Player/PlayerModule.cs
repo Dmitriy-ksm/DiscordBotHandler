@@ -14,30 +14,30 @@ namespace DiscordBotHandler.Function.Modules.Player
     {
         private readonly EFContext _db;
         private readonly IPlayer _player;
-        private readonly IVerificateCommand _verificator;
+        private readonly IValidator _validator;
         private readonly ILogger _logger;
         Dictionary<ulong, ulong> Channels;
         public PlayerModule(IServiceProvider services)
         {
             _player = services.GetRequiredService<IPlayer>();
-            _verificator = services.GetRequiredService<IVerificateCommand>();
+            _validator = services.GetRequiredService<IValidator>();
             _logger = services.GetRequiredService<ILogger>();
             _db = services.GetRequiredService<EFContext>();
             Channels = new Dictionary<ulong, ulong>();
             foreach (var item in _db.Guilds.ToList())
             {
                 if (item.VoiceChannelId > 0)
-                {
                     Channels.Add(item.GuildId, item.VoiceChannelId);
-                }
             }
 
         }
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("player", guildId, channelId, _logger);
+
         [Command("addVoiceChanel")]
         [Summary("Add voice channel for guild player")]
         public Task AddingVoiuceChannel([Summary("Voice channel id for the player")] ulong voiceChannelId)
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
                 var guildDb = _db.Guilds.FirstOrDefault(g => g.GuildId == Context.Guild.Id);
                 if (guildDb == null)
@@ -55,18 +55,15 @@ namespace DiscordBotHandler.Function.Modules.Player
                 else
                     Channels.Add(Context.Guild.Id, voiceChannelId);
             }
-            else
-                _logger.LogMessage(debugString);
             return Task.CompletedTask;
         }
         [Command("addTrack")]
         [Summary("Adding track to queue")]
         public Task AddingTrack([Summary("URL to track")] string uri)
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 _player.AddTrack(Context.Guild.Id, uri, 1);
-            else
-                _logger.LogMessage(debugString);
+
             return Task.CompletedTask;
         }
 
@@ -74,10 +71,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         [Summary("Adding track to queue")]
         public Task AddingTrackList([Summary("URL to tracks list")] string uri)
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 _player.AddTrack(Context.Guild.Id, uri, -1);
-            else
-                _logger.LogMessage(debugString);
+
             return Task.CompletedTask;
         }
 
@@ -88,18 +84,15 @@ namespace DiscordBotHandler.Function.Modules.Player
             if (Channels.ContainsKey(Context.Guild.Id))
             {
                 ulong channel_id = Channels[Context.Guild.Id];
-                if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+                if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 {
                     _player.JoinChannel(Context.Guild.Id, channel_id);
                     _player.Start(Context.Guild.Id);
                 }
-                else
-                {
-                    _logger.LogMessage(debugString);
-                }
             }
             else
                 _logger.LogMessage("Guild voice channel not set");
+
             return Task.CompletedTask;
         }
 
@@ -107,20 +100,18 @@ namespace DiscordBotHandler.Function.Modules.Player
         [Summary("Pausing track")]
         public Task Pause()
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 _player.Pause(Context.Guild.Id);
-            else
-                _logger.LogMessage(debugString);
+
             return Task.CompletedTask;
         }
         [Command("resume")]
         [Summary("Resuming track")]
         public Task Resume()
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 _player.Resume(Context.Guild.Id);
-            else
-                _logger.LogMessage(debugString);
+
             return Task.CompletedTask;
         }
 
@@ -128,10 +119,9 @@ namespace DiscordBotHandler.Function.Modules.Player
         [Summary("Skiping track")]
         public Task Skip()
         {
-            if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 _player.Skip(Context.Guild.Id);
-            else
-                _logger.LogMessage(debugString);
+
             return Task.CompletedTask;
         }
 
@@ -142,18 +132,15 @@ namespace DiscordBotHandler.Function.Modules.Player
             if (Channels.ContainsKey(Context.Guild.Id))
             {
                 ulong channel_id = Channels[Context.Guild.Id];
-                if (_verificator.IsValid("player", Context.Guild.Id, Context.Channel.Id, out string debugString))
+                if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 {
                     _player.Stop(Context.Guild.Id);
                     _player.LeaveChannel(Context.Guild.Id, channel_id);
                 }
-                else
-                {
-                    _logger.LogMessage(debugString);
-                }
             }
             else
                 _logger.LogMessage("Guild voice channel not set");
+
             return Task.CompletedTask;
         }
     }

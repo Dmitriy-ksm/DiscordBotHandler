@@ -10,17 +10,17 @@ namespace DiscordBotHandler.Services
 
         }
        
-        public async void JoinChannel(ulong guildId, ulong channel_id)
+        public void JoinChannel(ulong guildId, ulong channel_id)
         {
             
         }
 
-        public async void LeaveChannel(ulong guildId, ulong channel_id)
+        public void LeaveChannel(ulong guildId, ulong channel_id)
         {
-            
+
         }
 
-        public async void AddTrack(ulong guildId, string query, int maxCount)
+        public void AddTrack(ulong guildId, string query, int maxCount)
         {
             
         }
@@ -29,7 +29,7 @@ namespace DiscordBotHandler.Services
         {  
         }
 
-        public async void Skip(ulong guildId)
+        public void Skip(ulong guildId)
         {
            
         }

@@ -15,24 +15,26 @@ namespace DiscordBotHandler.Function.Modules.UserManager
     [Name("UserManager")]
     public class UserManagerModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IVerificateCommand _verificator;
+        private readonly IValidator _validator;
         private readonly EFContext _db;
         private readonly IDotaAssistans _dota;
         private readonly ILogger _logger;
         public UserManagerModule(IServiceProvider services)
         {
             _db = services.GetRequiredService<EFContext>();
-            _verificator = services.GetRequiredService<IVerificateCommand>();
+            _validator = services.GetRequiredService<IValidator>();
             _dota = services.GetRequiredService<IDotaAssistans>();
             _logger = services.GetRequiredService<ILogger>();
         }
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("usermanager", guildId, channelId, _logger);
+
         [Command("addInfoes")]
         [Summary("Adding additional info for users")]
         [RequireBotModerationRole]
         public Task SetAdditionalInfoes([Summary("User whos get new infoes")] SocketUser user, [Summary("Info key")] string key, [Summary("Info")] params string[] valueFull)
         {
             string value = string.Join(" ", valueFull);
-            if (_verificator.IsValid("usermanager", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
                 var userDb = _db.UserInfos.FirstOrDefault(u => u.Id == user.Id);
                 if (userDb != null)
@@ -66,10 +68,6 @@ namespace DiscordBotHandler.Function.Modules.UserManager
                 }
                 _db.SaveChanges();
             }
-            else
-            {
-                _logger.LogMessage(debugString);
-            }
             return Task.CompletedTask;
         }
         [Command("addSteamUser")]
@@ -77,28 +75,20 @@ namespace DiscordBotHandler.Function.Modules.UserManager
         [RequireBotModerationRole]
         public Task SetSteamId([Summary("User whos get new infoes")] SocketUser user, [Summary("User steam profile url")]string url)
         {
-            if (_verificator.IsValid("usermanager", Context.Guild.Id, Context.Channel.Id, out string debugString))
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
                 ulong steamId = Task.Run(async () => { return await _dota.GetSteamIdAsync(url); }).Result;
                 if (steamId == 0)
-                {
                     return ReplyAsync("SteamId не найден");
-                }
+
                 var userDb = _db.UserInfos.FirstOrDefault(u => u.Id == user.Id);
                 if (userDb != null)
-                {
                     userDb.SteamId = steamId;
-                }
                 else
-                {
                     _db.UserInfos.Add(new UserInfo() { Id = user.Id, SteamId = steamId });
-                }
+
                 _db.SaveChanges();
                 ReplyAsync("Пользователь сохраннен");
-            }
-            else
-            {
-                _logger.LogMessage(debugString);
             }
             return Task.CompletedTask;
         }

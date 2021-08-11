@@ -5,13 +5,9 @@ namespace DiscordBotHandler.Logger
 {
     class LoggerEmpty : ILogger
     {
-        public LoggerEmpty()
+        public Task<Task> LogMessage(string message)
         {
-
-        }
-        public async Task<Task> LogMessage(string message)
-        {
-            return Task.CompletedTask;
+            return Task.FromResult(Task.CompletedTask);
         }
     }
 }

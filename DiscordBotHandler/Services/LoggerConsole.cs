@@ -6,14 +6,10 @@ namespace DiscordBotHandler.Logger
 {
     class LoggerConsole : ILogger
     {
-        public LoggerConsole()
-        {
-
-        }
-        public async Task<Task> LogMessage(string message)
+        public Task<Task> LogMessage(string message)
         {
             Console.WriteLine(message);
-            return Task.CompletedTask;
+            return Task.FromResult(Task.CompletedTask);
         }
     }
 }

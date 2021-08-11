@@ -26,49 +26,54 @@ namespace DiscordBotHandler.Function
             _wordSearch = services.GetRequiredService<IWordSearch>();
             _cooldown = services.GetRequiredService<ICooldown>();
         }
-        public async Task InitializeAsync()
+        public Task InitializeAsync()
         {
-            
             _commands.CommandExecuted += CommandExecutedAsync;
             _client.MessageReceived += MessageReceived;
             _client.Log += Log;
+            return Task.CompletedTask;
         }
-        public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
+
+        public Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
             // command is unspecified when there was a search failure (command not found); we don't care about these errors
             if (!command.IsSpecified)
-                return;
+                return Task.CompletedTask;
 
             // the command was successful, we don't care about this result, unless we want to log that a command succeeded.
             if (result.IsSuccess)
             {
-                _log.LogMessage($"{command.Value.Name} successed");
-                return;
+                _ = _log.LogMessage($"{command.Value.Name} successed");
+                return Task.CompletedTask;
             }
 
             // the command failed, let's notify the user that something happened.
-            _log.LogMessage($"error: {result}");
+            _ = _log.LogMessage($"error: {result}");
+            return Task.CompletedTask;
         }
 
         public async Task MessageReceived(SocketMessage msg)
         {
             if (msg.Author.Id == _client.CurrentUser.Id)
                 return;
+
             var message = msg as SocketUserMessage;
             if (message == null || message.Author.IsBot)
                 return;
+
             var context = new SocketCommandContext(_client, message);
             string reply = _cooldown.Check("wordsearch") ? _wordSearch.SearchWord(context.Guild.Id, msg.Content) : null;
            
             if (reply != null)
             {
                 _cooldown.Set("wordsearch");
-                message.Channel.SendMessageAsync(reply);
+                await message.Channel.SendMessageAsync(reply);
             }
             int argPos = 0;
             if (!(message.HasCharPrefix('!', ref argPos) ||
                     message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
                 return;
+
             await _commands.ExecuteAsync(context, argPos, _services);
         }
         public async Task<Task> Log(LogMessage msg)

@@ -12,31 +12,30 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
+
     class DotaAssistans : IDotaAssistans
     {
         private SteamWebInterfaceFactory webInterfaceFactory;
         private DOTA2Econ dotaEconInterface;
-        private DOTA2Match dotaInterface;
-        private SteamUser steamInterface;
+        private DOTA2Match _dotaInterface;
+        private SteamUser _steamInterface;
+
+        SteamUser SteamInterface => _steamInterface ??= webInterfaceFactory.CreateSteamWebInterface<SteamUser>(new HttpClient());
+        DOTA2Match DotaInterface => _dotaInterface ??= webInterfaceFactory.CreateSteamWebInterface<DOTA2Match>(new HttpClient());
+        
         private List<Hero> Heroes;
         private List<GameItem> Items;
         public DotaAssistans()
         {
             webInterfaceFactory = new SteamWebInterfaceFactory(ConfigurationManager.AppSettings["steamWebApi"]);
             dotaEconInterface = webInterfaceFactory.CreateSteamWebInterface<DOTA2Econ>(new HttpClient());
-            steamInterface = webInterfaceFactory.CreateSteamWebInterface<SteamUser>(new HttpClient());
-            dotaInterface = webInterfaceFactory.CreateSteamWebInterface<DOTA2Match>(new HttpClient());
             GetHeroes();
             GetItems();
         }
-        public Hero GetHeroById(uint id)
-        {
-            return Heroes.FirstOrDefault(h => h.Id == id);
-        }
-        public GameItem GetItemById(uint id)
-        {
-            return Items.FirstOrDefault(i => i.Id == id);
-        }
+
+        public Hero GetHeroById(uint id) => Heroes.FirstOrDefault(h => h.Id == id);
+        public GameItem GetItemById(uint id) => Items.FirstOrDefault(i => i.Id == id);
+
         public async Task<ulong> GetSteamIdAsync(string url)
         {
             ulong result = 0;
@@ -54,7 +53,7 @@ namespace DiscordBotHandler.Services
                             break;
                         }
                     }
-                    result = (await steamInterface.ResolveVanityUrlAsync(vanityToResolve, 1)).Data;
+                    result = (await SteamInterface.ResolveVanityUrlAsync(vanityToResolve, 1)).Data;
                 }
                 else if (url.Contains("/profiles/"))
                 {
@@ -75,13 +74,12 @@ namespace DiscordBotHandler.Services
             }
             return result;
         }
-        public async Task<DotaGameResult> GetDotaByMatchIdAsync(ulong matchId)
-        {
-            return await GetDota(matchId);
-        }
+
+        public async Task<DotaGameResult> GetDotaByMatchIdAsync(ulong matchId) => await GetDota(matchId);
+
         public async Task<DotaGameResult> GetDotaAsync(ulong accountId)
         {
-            var response = await dotaInterface.GetMatchHistoryAsync(accountId: accountId, matchesRequested: "1");
+            var response = await DotaInterface.GetMatchHistoryAsync(accountId: accountId, matchesRequested: "1");
             if (response.Data.Matches != null)
             {
                 var Match = response.Data.Matches.First();
@@ -89,17 +87,13 @@ namespace DiscordBotHandler.Services
             }
             return null;
         }
-        public async void GetHeroes()
-        {
-            Heroes = (await dotaEconInterface.GetHeroesAsync()).Data.ToList();
-        }
-        public async void GetItems()
-        {
-            Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
-        }
+
+        public async void GetHeroes() => Heroes = (await dotaEconInterface.GetHeroesAsync()).Data.ToList();
+        public async void GetItems() => Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
+
         public async Task<DotaGameResult> GetDota(ulong matchId)
         {
-            var responseFull = await dotaInterface.GetMatchDetailsAsync(matchId);
+            var responseFull = await DotaInterface.GetMatchDetailsAsync(matchId);
             var MatchDetails = responseFull.Data;
             var Players = MatchDetails.Players.AsEnumerable();
             DotaGameResult returnValue = new DotaGameResult()

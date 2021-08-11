@@ -30,6 +30,7 @@
     <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\PlayerEmpty.cs" />
     <Compile Include="Services\Player.cs" />
+    <Compile Include="Services\Validator.cs" />
     <Compile Include="Services\VerificateCommand.cs" />
     <Compile Include="Services\WordSearchService.cs" />
   </ItemGroup>

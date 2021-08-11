@@ -26,22 +26,14 @@ namespace DiscordBotHandler.Services.Base
                     Storage.Add(Path.GetFileNameWithoutExtension(fileName), fileName);
             }
             else
-            {
                 Directory.CreateDirectory(path);
-            }
         }
-        public bool HasObject(string key)
-        {
-            if (Storage.ContainsKey(key))
-            { return true; }
-            else return false;
-        }
+        public bool HasObject(string key) => Storage.ContainsKey(key);
+
         public Image GetObject(string key)
         {
             if (HasObject(key))
-            {
                 return Image.Load(Storage[key]);
-            }
             else
             {
                 var image = Provider.GetObject(key);
@@ -55,9 +47,7 @@ namespace DiscordBotHandler.Services.Base
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
-            {
                 return;
-            }
 
             if (disposing)
             {

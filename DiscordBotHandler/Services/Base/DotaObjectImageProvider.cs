@@ -15,9 +15,7 @@ namespace DiscordBotHandler.Services.Providers
         public Image GetObject(params object[] obj)
         {
             if (obj.Length < 1)
-            {
                 return null;
-            }
             else
             {
                 string url = string.Empty;
@@ -37,7 +35,6 @@ namespace DiscordBotHandler.Services.Providers
                         }
                     }
                     objName = "recipe";
-                    //TODO прикрутить картинку самого предмета в углу рецепта
                 }
                 if (_type.Equals(StorageContains.DotaHero))
                     url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/" + objName.Replace("npc_dota_hero_", "") + ".png";
@@ -51,9 +48,8 @@ namespace DiscordBotHandler.Services.Providers
                     {
                         Image result = Image.Load(streamItem);
                         if(recipeItemImage != null)
-                        {
                             result.Mutate(i => i.DrawImage(recipeItemImage,new Point((int)(result.Width*0.25),(int)(result.Height*0.25)), 1f));
-                        }
+
                         return result;
                     }
                 }

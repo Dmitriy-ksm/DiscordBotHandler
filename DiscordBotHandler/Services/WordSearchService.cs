@@ -29,9 +29,7 @@ namespace DiscordBotHandler.Services
                         foreach (var wordText in text.Split(new char[] { ' ', '.', ',', '!', '?' }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             if (wordText.ToLower().StartsWith(word.ToLower()))
-                            {
                                 return item.Reply;
-                            }
                         }
                     }
                 }

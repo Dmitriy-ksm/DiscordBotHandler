@@ -10,29 +10,24 @@ namespace DiscordBotHandler.Function.Modules.Crypto
     [Name("crypto")]
     public class CryptoModule : ModuleBase<SocketCommandContext>
     {
-        private readonly EFContext _db;
-        private readonly IVerificateCommand _verificator;
+        private readonly IValidator _validator;
         private readonly ILogger _logger;
         private readonly ICrypto _cryptoService;
         public CryptoModule(IServiceProvider services )
         {
-            _db = services.GetRequiredService<EFContext>();
-            _verificator = services.GetRequiredService<IVerificateCommand>();
+            _validator = services.GetRequiredService<IValidator>();
             _logger = services.GetRequiredService<ILogger>();
             _cryptoService = services.GetRequiredService<ICrypto>();
         }
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("crypto", guildId, channelId, _logger);
+
         [Command("Криптовалютчик")]
         [Summary("Get crypto infoes")]
         public Task GetCrypto()
         {
-            if (_verificator.IsValid("crypto", Context.Guild.Id, Context.Channel.Id, out string debugString))
-            {
+            if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
                 ReplyAsync(Task.Run(async () => { return await _cryptoService.GetCryptoInfoAsync(); }).Result);
-            }
-            else
-            {
-                _logger.LogMessage(debugString);
-            }
+
             return Task.CompletedTask;
         }
     }

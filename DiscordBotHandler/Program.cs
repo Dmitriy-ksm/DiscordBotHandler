@@ -80,8 +80,9 @@ namespace DiscordBotHandler
                 .AddSingleton<IDotaAssistans, DotaAssistans>()
                 .AddSingleton<ICrypto, Crypto>()
                 .AddSingleton<IPlayer, PlayerEmpty>()
-                .AddSingleton<IWordSearch,WordSearchService>()
-                .AddSingleton<IVerificateCommand,VerificateCommand>()
+                .AddSingleton<IWordSearch, WordSearchService>()
+                .AddSingleton<IVerificateCommand, VerificateCommand>()
+                .AddSingleton<IValidator, Validator>()
                  .AddSingleton((provider) =>
                  {
                      var service = new CommandService();
@@ -89,7 +90,7 @@ namespace DiscordBotHandler
                          .GetAwaiter().GetResult();
                      return service;
                  })
-                 .AddSingleton<ICooldown,Cooldown>()
+                 .AddSingleton<ICooldown, Cooldown>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
         }

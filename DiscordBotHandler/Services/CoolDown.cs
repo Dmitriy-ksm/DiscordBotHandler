@@ -18,10 +18,10 @@ namespace DiscordBotHandler.Services
         {
             var time = DateTime.Now;
             var commandCooldown = _db.Cooldowns.FirstOrDefault(c => c.Key == key);
-            if (commandCooldown == null || time.Subtract(commandCooldown.LastUse).TotalSeconds > commandCooldown.KeyCooldown)
-            {
+            if (commandCooldown == null || 
+                time.Subtract(commandCooldown.LastUse).TotalSeconds > commandCooldown.KeyCooldown)
                 return true;
-            }
+            _logger.LogMessage($"{key} cooldown not expire yet");
             return false;
         }
         public void Set(string key)

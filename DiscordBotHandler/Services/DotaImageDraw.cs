@@ -17,12 +17,39 @@ using DiscordBotHandler.Helpers.Dota;
 
 namespace DiscordBotHandler.Services
 {
+    public struct Sizes
+    {
+        public int fullWidth;
+        public int fullHeight;
+        public int headerHeight;
+        public int heroesColumnWidth;
+        public int heroesColumnHeight;
+        public int heroPortraitWidth;
+        public int heroPortraitHeight;
+        public int heroesColumnIndent;
+        public int itemBackpackSquare;
+        public int itemSquare;
+        public int itemHorizontalIntent;
+        public int itemColumnHeight;
+        public int _fontHeight;
+        public int heroStatsHeight;
+        public int footerHeight;
+        public int towerRadius;
+        public int barackSize;
+        public int ancientSize;
+        public int heroPortraitPickBanWidth;
+        public int heroPortraitPickBanHeight;
+        public int pickBanHeight;
+    }
     public class DotaImageDraw : IDraw<DotaGameResult>
     {
         private readonly ILogger _logger;
         private readonly IDotaAssistans _dota;
         private readonly IStorage<Image> _heroImageStorage;
         private readonly IStorage<Image> _itemImageStorage;
+
+        private readonly Sizes _size = Consts.DotaMiniMapSizes;
+
         public DotaImageDraw(IServiceProvider service)
         {
             var providerDelegat = service.GetRequiredService<Func<StorageContains, IStorage<Image>>>();
@@ -31,54 +58,7 @@ namespace DiscordBotHandler.Services
             _heroImageStorage = providerDelegat(StorageContains.DotaHero);
             _itemImageStorage = providerDelegat(StorageContains.DotaItem);
         }
-        struct Sizes
-        {
-            public int fullWidth;
-            public int fullHeight;
-            public int headerHeight;
-            public int heroesColumnWidth;
-            public int heroesColumnHeight;
-            public int heroPortraitWidth;
-            public int heroPortraitHeight;
-            public int heroesColumnIndent;
-            public int itemBackpackSquare;
-            public int itemSquare;
-            public int itemHorizontalIntent;
-            public int itemColumnHeight;
-            public int _fontHeight;
-            public int heroStatsHeight;
-            public int footerHeight;
-            public int towerRadius;
-            public int barackSize;
-            public int ancientSize;
-            public int heroPortraitPickBanWidth;
-            public int heroPortraitPickBanHeight;
-            public int pickBanHeight;
-        }
-        private readonly Sizes _size = new Sizes()
-        {
-            fullWidth = 1920,
-            fullHeight = 1080,
-            headerHeight = 55,
-            heroesColumnWidth = 170,
-            heroesColumnHeight = 650,
-            heroPortraitWidth = 150,
-            heroPortraitHeight = 100,
-            heroesColumnIndent = (170 - 150) / 2,
-            itemBackpackSquare = 30,
-            itemSquare = 65,
-            itemHorizontalIntent = 15,
-            itemColumnHeight = 350,
-            _fontHeight = 25,
-            heroStatsHeight = 225,
-            footerHeight = 375,
-            towerRadius = 6,
-            barackSize = 10,
-            ancientSize = 20,
-            heroPortraitPickBanWidth = 100,
-            heroPortraitPickBanHeight = 75,
-            pickBanHeight = 255,
-        };
+
         private Font _font = SystemFonts.CreateFont("Arial", 18, FontStyle.Regular);
         private Font _fontHeader = SystemFonts.CreateFont("Arial", 36, FontStyle.Regular);
         private bool IsPlayerIdEqualSteamId(uint playerId, ulong steamId)
@@ -375,41 +355,28 @@ namespace DiscordBotHandler.Services
             {
                 Image ImageToDraw;
                 if (pb.IsPick && pickedHeores.ContainsKey(pb.HeroId))
-                {
                     ImageToDraw = pickedHeores[pb.HeroId];
-                }
                 else
-                {
                     ImageToDraw = _heroImageStorage.GetObject(_dota.GetHeroById(pb.HeroId).Name);
-                }
+
                 ImageToDraw.Mutate(o => o.Resize(_size.heroPortraitPickBanWidth, _size.heroPortraitPickBanHeight));
                 if (pb.Team == 0)
                 {
                     if (CounterRadiant < 12)
-                    {
                         picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(_size.heroPortraitPickBanWidth * CounterRadiant++, 0), 1f));
-                    }
                     else
-                    {
                         picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(_size.heroPortraitPickBanWidth * bonusCounter++, _size.heroPortraitPickBanHeight * 2 + _size.itemHorizontalIntent), 1f));
-                    }
                 }
                 else
                 {
                     if (CounterDire < 12)
-                    {
                         picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(_size.heroPortraitPickBanWidth * CounterDire++, _size.heroPortraitPickBanHeight + _size.itemHorizontalIntent), 1f));
-                    }
                     else
-                    {
                         picksAndBans.Mutate(o => o.DrawImage(ImageToDraw, new Point(_size.heroPortraitPickBanWidth * bonusCounter++, _size.heroPortraitPickBanHeight * 2 + _size.itemHorizontalIntent), 1f));
-                    }
                 }
                 ImageToDraw.Dispose();
                 if (bonusCounter > 12)
-                {
                     break;
-                }
             }
             return picksAndBans;
         }
@@ -423,7 +390,7 @@ namespace DiscordBotHandler.Services
             using Image<Rgba32> picksAndBans = DrawPicksAndBan(match, pickedHeores, footer.Height);
 
             using Image<Rgba32> gameInfo = new Image<Rgba32>(_size.heroesColumnWidth * 8, _size.footerHeight - _size.pickBanHeight);
-            //TODO gameinfo
+
             gameInfo.Mutate(o => o.DrawText("Match Id:" + match.MatchId + " Duration:" + TimeSpan.FromSeconds(match.Duration).ToString() + " Game start at:" + match.StartTime.ToString(),
                 _font, Color.White, new Point(0, 0)));
             footer.Mutate(o => o.DrawImage(miniMap, new Point(0, 0), 1f)
