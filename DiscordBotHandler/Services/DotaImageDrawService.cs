@@ -14,43 +14,21 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.Fonts;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Helpers.Dota;
+using DiscordBotHandler.Enum;
 
 namespace DiscordBotHandler.Services
 {
-    public struct Sizes
-    {
-        public int fullWidth;
-        public int fullHeight;
-        public int headerHeight;
-        public int heroesColumnWidth;
-        public int heroesColumnHeight;
-        public int heroPortraitWidth;
-        public int heroPortraitHeight;
-        public int heroesColumnIndent;
-        public int itemBackpackSquare;
-        public int itemSquare;
-        public int itemHorizontalIntent;
-        public int itemColumnHeight;
-        public int _fontHeight;
-        public int heroStatsHeight;
-        public int footerHeight;
-        public int towerRadius;
-        public int barackSize;
-        public int ancientSize;
-        public int heroPortraitPickBanWidth;
-        public int heroPortraitPickBanHeight;
-        public int pickBanHeight;
-    }
-    public class DotaImageDraw : IDraw<DotaGameResult>
+
+    public class DotaImageDrawService : IDraw<DotaGameResult>
     {
         private readonly ILogger _logger;
         private readonly IDotaAssistans _dota;
         private readonly IStorage<Image> _heroImageStorage;
         private readonly IStorage<Image> _itemImageStorage;
 
-        private readonly Sizes _size = Consts.DotaMiniMapSizes;
+        private readonly MinimapSizes _size = Consts.DotaMiniMapSizes;
 
-        public DotaImageDraw(IServiceProvider service)
+        public DotaImageDrawService(IServiceProvider service)
         {
             var providerDelegat = service.GetRequiredService<Func<StorageContains, IStorage<Image>>>();
             _logger = service.GetRequiredService<ILogger>();

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace DiscordBotHandler.Services
 {
 
-    class DotaAssistans : IDotaAssistans
+    public class DotaAssistansService : IDotaAssistans
     {
         private SteamWebInterfaceFactory webInterfaceFactory;
         private DOTA2Econ dotaEconInterface;
@@ -25,7 +25,7 @@ namespace DiscordBotHandler.Services
         
         private List<Hero> Heroes;
         private List<GameItem> Items;
-        public DotaAssistans()
+        public DotaAssistansService()
         {
             webInterfaceFactory = new SteamWebInterfaceFactory(ConfigurationManager.AppSettings["steamWebApi"]);
             dotaEconInterface = webInterfaceFactory.CreateSteamWebInterface<DOTA2Econ>(new HttpClient());
@@ -79,17 +79,28 @@ namespace DiscordBotHandler.Services
 
         public async Task<DotaGameResult> GetDotaAsync(ulong accountId)
         {
-            var response = await DotaInterface.GetMatchHistoryAsync(accountId: accountId, matchesRequested: "1");
-            if (response.Data.Matches != null)
+            var matchId =  await GetLastMatchBySteamId(accountId);
+            if(matchId > 0)
             {
-                var Match = response.Data.Matches.First();
-                return await GetDota(Match.MatchId);
+                return await GetDota(matchId);
             }
             return null;
         }
 
-        public async void GetHeroes() => Heroes = (await dotaEconInterface.GetHeroesAsync()).Data.ToList();
-        public async void GetItems() => Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
+        public async Task<ulong> GetLastMatchBySteamId(ulong accountId)
+        {
+            var response = await DotaInterface.GetMatchHistoryAsync(accountId: accountId, matchesRequested: "1");
+            if (response.Data.Matches != null)
+            {
+                var Match = response.Data.Matches.First();
+                return Match.MatchId;
+            }
+            else
+                return 0;
+        }
+
+        async void GetHeroes() => Heroes = (await dotaEconInterface.GetHeroesAsync()).Data.ToList();
+        async void GetItems() => Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
 
         public async Task<DotaGameResult> GetDota(ulong matchId)
         {

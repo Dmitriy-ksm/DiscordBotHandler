@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Services;
+﻿using DiscordBotHandler.Enum;
 
 namespace DiscordBotHandler.Helpers
 {
@@ -6,7 +6,7 @@ namespace DiscordBotHandler.Helpers
     {
         public const ulong SteamAccount3264BitConst  = 76561197960265728;
 
-        public static readonly Sizes DotaMiniMapSizes = new Sizes()
+        public static readonly MinimapSizes DotaMiniMapSizes = new MinimapSizes()
         {
             fullWidth = 1920,
             fullHeight = 1080,

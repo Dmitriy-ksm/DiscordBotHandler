@@ -7,10 +7,10 @@ using System.Text;
 
 namespace DiscordBotHandler.Services
 {
-    class Validator : IValidator
+    public class ValidatorService : IValidator
     {
         private IVerificateCommand _verificator;
-        public Validator(IServiceProvider services)
+        public ValidatorService(IServiceProvider services)
         {
             _verificator = services.GetRequiredService<IVerificateCommand>();
         }

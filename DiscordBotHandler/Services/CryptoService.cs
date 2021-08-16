@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
-    class Crypto:ICrypto
+    public class CryptoService :ICrypto
     {
         private EFContext _dbContext;
-        public Crypto(EFContext dbContext)
+        public CryptoService(EFContext dbContext)
         {
             _dbContext = dbContext;
         }

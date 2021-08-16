@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="D:\DiscordBotHandler\DiscordBotHandler\App.config" DestinationFiles="$(OutDir)\testhost.dll.config" />
+    <Copy SourceFiles="D:\DiscordBotHandler\DiscordBotHandler\App.config" DestinationFiles="$(OutDir)\testhost.x86.dll.config" />
+  </Target>
+  
+  <ItemGroup>
+    <None Include="..\DiscordBotHandler\App.config" Link="App.config" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiscordBotHandler\DiscordBotHandler.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -5,7 +5,7 @@ using System.Net;
 
 namespace DiscordBotHandler.Services.Providers
 {
-    class DotaObjectImageProvider : IStorageProvider<Image>
+    public class DotaObjectImageProvider : IStorageProvider<Image>
     {
         private readonly StorageContains _type;
         public DotaObjectImageProvider(StorageContains type)

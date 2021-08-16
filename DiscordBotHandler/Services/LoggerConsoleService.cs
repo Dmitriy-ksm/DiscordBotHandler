@@ -2,9 +2,9 @@
 using System;
 using System.Threading.Tasks;
 
-namespace DiscordBotHandler.Logger
+namespace DiscordBotHandler.Services
 {
-    class LoggerConsole : ILogger
+    public class LoggerConsoleService : ILogger
     {
         public Task<Task> LogMessage(string message)
         {

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
-    class Player : IPlayer
+    public class PlayerService : IPlayer
     {
         private readonly DiscordSocketClient _client;
         private readonly LavalinkNode lavalinkManager;
@@ -22,8 +22,8 @@ namespace DiscordBotHandler.Services
         public Dictionary<ulong, Queue<LavalinkTrack>> Tracks =>
             _tracks ??= new Dictionary<ulong, Queue<LavalinkTrack>>();
         public Interfaces.ILogger _logger;
-        public LavalinkWrapperLogger _loggerLvl2;
-        public Player(DiscordSocketClient client, Interfaces.ILogger logger)
+        LavalinkWrapperLogger _loggerLvl2;
+        public PlayerService(DiscordSocketClient client, Interfaces.ILogger logger)
         {
             _client = client;
             _logger = logger;

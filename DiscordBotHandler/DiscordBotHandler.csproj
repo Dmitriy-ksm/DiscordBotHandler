@@ -18,20 +18,20 @@
 
   <ItemGroup>
     <Compile Include="Services\Base\StorageProviderBase.cs" />
-    <Compile Include="Services\CoolDown.cs" />
-    <Compile Include="Services\Crypto.cs" />
-    <Compile Include="Services\DotaAssistans.cs" />
-    <Compile Include="Services\DotaImageDraw.cs" />
+    <Compile Include="Services\CooldownService.cs" />
+    <Compile Include="Services\CryptoService.cs" />
+    <Compile Include="Services\DotaAssistansService.cs" />
+    <Compile Include="Services\DotaImageDrawService.cs" />
     <Compile Include="Services\Base\DotaObjectImageProvider.cs" />
-    <Compile Include="Services\ImageStorageItem.cs" />
-    <Compile Include="Services\ImageStorageHero.cs" />
-    <Compile Include="Services\LoggerConsole.cs" />
-    <Compile Include="Services\LoggerEmpty.cs" />
-    <Compile Include="Services\Logger.cs" />
-    <Compile Include="Services\PlayerEmpty.cs" />
-    <Compile Include="Services\Player.cs" />
-    <Compile Include="Services\Validator.cs" />
-    <Compile Include="Services\VerificateCommand.cs" />
+    <Compile Include="Services\ImageStorageItemService.cs" />
+    <Compile Include="Services\ImageStorageHeroService.cs" />
+    <Compile Include="Services\LoggerConsoleService.cs" />
+    <Compile Include="Services\LoggerEmptyService.cs" />
+    <Compile Include="Services\LoggerService.cs" />
+    <Compile Include="Services\PlayerEmptyService.cs" />
+    <Compile Include="Services\PlayerService.cs" />
+    <Compile Include="Services\ValidatorService.cs" />
+    <Compile Include="Services\VerificateCommandService.cs" />
     <Compile Include="Services\WordSearchService.cs" />
   </ItemGroup>
 

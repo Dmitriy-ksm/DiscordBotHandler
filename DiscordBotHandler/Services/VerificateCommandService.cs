@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
-    class VerificateCommand : IVerificateCommand
+    public class VerificateCommandService : IVerificateCommand
     {
         private EFContext _db;
-        public VerificateCommand(EFContext db)
+        public VerificateCommandService(EFContext db)
         {
             _db = db;
         }

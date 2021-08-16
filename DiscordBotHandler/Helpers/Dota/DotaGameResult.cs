@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DiscordBotHandler.Helpers.Dota
 {
-    public class DotaGameResult
+    public class DotaGameResult 
     {
         public ulong? PlayerId;
         public ulong MatchId;
@@ -17,6 +17,20 @@ namespace DiscordBotHandler.Helpers.Dota
         public TowerState TowerStatesRadiant;
         public List<HeroesPick> PicksAndBans;
         public List<DotaPlayer> Players;
+
+        public override bool Equals(object obj)
+        {
+            //Check for null and compare run-time types.
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                DotaGameResult p = (DotaGameResult)obj;
+                return (MatchId == p.MatchId);
+            }
+        }
     }
     public class HeroesPick
     {

@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
-    class Cooldown : ICooldown
+    public class CooldownService : ICooldown
     {
         private EFContext _db;
         private ILogger _logger;
-        public Cooldown(EFContext db, ILogger logger)
+        public CooldownService(EFContext db, ILogger logger)
         {
             _db = db;
             _logger = logger;

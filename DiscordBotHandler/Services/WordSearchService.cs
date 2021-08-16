@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
-    class WordSearchService : IWordSearch
+    public class WordSearchService : IWordSearch
     {
         private readonly EFContext _db;
         public WordSearchService(IServiceProvider services)
