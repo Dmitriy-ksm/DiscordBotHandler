@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +11,10 @@ namespace DiscordBotHandler.Services
 {
     public class WordSearchService : IWordSearch
     {
-        private readonly EFContext _db;
+        private readonly IEFContext _db;
         public WordSearchService(IServiceProvider services)
         {
-            _db = services.GetRequiredService<EFContext>();
+            _db = services.GetRequiredService<IEFContext>();
         }
         public string SearchWord(ulong guildId, string text)
         {

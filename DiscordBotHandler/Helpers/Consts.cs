@@ -30,5 +30,11 @@ namespace DiscordBotHandler.Helpers
             heroPortraitPickBanHeight = 75,
             pickBanHeight = 255,
         };
+
+        public const string CommandModuleNameCrypto = "Crypto";
+        public const string CommandModuleNameDota = "Dota";
+        public const string CommandModuleNamePlayer = "Player";
+        public const string CommandModuleNameUserManager = "UserManager";
+        public const string CommandModuleNameWordSearch = "WordSearch";
     }
 }

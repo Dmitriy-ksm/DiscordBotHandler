@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DiscordBotHandler.Entity.Data;
 using DiscordBotHandler.Entity.Entities;
+using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.UserManager
 {
-    [Name("UserManager")]
+    [Name(Consts.CommandModuleNameUserManager)]
     public class UserManagerModule : ModuleBase<SocketCommandContext>
     {
         private readonly IValidator _validator;
@@ -26,7 +27,7 @@ namespace DiscordBotHandler.Function.Modules.UserManager
             _dota = services.GetRequiredService<IDotaAssistans>();
             _logger = services.GetRequiredService<ILogger>();
         }
-        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("usermanager", guildId, channelId, _logger);
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid(Consts.CommandModuleNameUserManager.ToLower(), guildId, channelId, _logger);
 
         [Command("addInfoes")]
         [Summary("Adding additional info for users")]

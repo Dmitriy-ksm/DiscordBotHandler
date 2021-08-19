@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using DiscordBotHandler.Entity.Data;
+using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Player
 {
-    [Name("Player")]
+    [Name(Consts.CommandModuleNamePlayer)]
     public class PlayerModule : ModuleBase<SocketCommandContext>
     {
         private readonly EFContext _db;
@@ -31,7 +32,7 @@ namespace DiscordBotHandler.Function.Modules.Player
             }
 
         }
-        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("player", guildId, channelId, _logger);
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid(Consts.CommandModuleNamePlayer.ToLower(), guildId, channelId, _logger);
 
         [Command("addVoiceChanel")]
         [Summary("Add voice channel for guild player")]

@@ -16,6 +16,7 @@ using Image = SixLabors.ImageSharp.Image;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Services.Providers;
 using DiscordBotHandler.Helpers.Dota;
+using DiscordBotHandler.Entity;
 
 namespace DiscordBotHandler
 {
@@ -47,6 +48,7 @@ namespace DiscordBotHandler
 
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
+                .AddScoped<IEFContext>(provider => provider.GetService<EFContext>())
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<ImageStorageHeroService>()
                 .AddSingleton<ImageStorageItemService>()

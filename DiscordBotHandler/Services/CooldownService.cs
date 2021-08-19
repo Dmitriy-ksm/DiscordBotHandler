@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Interfaces;
 using System;
 using System.Linq;
@@ -7,9 +7,9 @@ namespace DiscordBotHandler.Services
 {
     public class CooldownService : ICooldown
     {
-        private EFContext _db;
+        private IEFContext _db;
         private ILogger _logger;
-        public CooldownService(EFContext db, ILogger logger)
+        public CooldownService(IEFContext db, ILogger logger)
         {
             _db = db;
             _logger = logger;

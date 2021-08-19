@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using System;
@@ -7,19 +7,23 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
     public class CryptoService :ICrypto
     {
-        private EFContext _dbContext;
-        public CryptoService(EFContext dbContext)
+        private IEFContext _dbContext;
+        public CryptoService(IEFContext dbContext)
         {
             _dbContext = dbContext;
         }
         public async Task<string> GetCryptoInfoAsync()
         {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
             var newCrypto = await getEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
             var result = "Текущийкурс Ether: " + newCrypto.EthUsd + "$" + Environment.NewLine;
             var lastCryptoDataDb = _dbContext.CryptoInfo.AsQueryable().OrderByDescending(x => x.Id).FirstOrDefault();
@@ -44,7 +48,7 @@ namespace DiscordBotHandler.Services
             };
 
             _dbContext.CryptoInfo.Add(cryptoInfoNew);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(token);
             if (lastCryptoData != null)
             {
                 double procent = ((Convert.ToDouble(newCrypto.EthUsd, CultureInfo.InvariantCulture) / Convert.ToDouble(lastCryptoData.EthUsd, CultureInfo.InvariantCulture) - 1) * 100);

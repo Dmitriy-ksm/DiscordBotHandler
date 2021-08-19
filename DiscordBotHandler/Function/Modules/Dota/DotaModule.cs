@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DiscordBotHandler.Entity.Data;
 using DiscordBotHandler.Entity.Entities;
+using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Dota
 {
-    [Name("Dota")]
+    [Name(Consts.CommandModuleNameDota)]
     public class DotaModule : ModuleBase<SocketCommandContext>
     {
         private readonly IDotaAssistans _dota;
@@ -21,7 +22,7 @@ namespace DiscordBotHandler.Function.Modules.Dota
         private readonly IDraw<DotaGameResult> _draw;
         private readonly ILogger _logger;
 
-        public DotaModule(IServiceProvider services/*IDotaAssistans dota, EFContext db, IVerificateCommand verificator, ILogger logger*/ )
+        public DotaModule(IServiceProvider services)
         {
             _dota = services.GetService<IDotaAssistans>();
             _db = services.GetRequiredService<EFContext>();
@@ -29,7 +30,7 @@ namespace DiscordBotHandler.Function.Modules.Dota
             _logger = services.GetRequiredService<ILogger>();
             _draw = services.GetRequiredService<IDraw<DotaGameResult>>();
         }
-        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("dota", guildId, channelId, _logger);
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid(Consts.CommandModuleNameDota.ToLower(), guildId, channelId, _logger);
 
         [Command("gameBySteamUrl")]
         [Summary("Getting game history")]
