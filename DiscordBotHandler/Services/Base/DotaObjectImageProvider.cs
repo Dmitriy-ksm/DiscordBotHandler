@@ -24,7 +24,7 @@ namespace DiscordBotHandler.Services.Providers
                 if (objName.Contains("recipe"))
                 {
                     string recipeItem = objName.Replace("recipe_", "");
-                    string urlItem = url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images//items/" + recipeItem.Replace("item_", "") + "_lg.png";
+                    string urlItem = url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/" + recipeItem.Replace("item_", "") + ".png";
                     var requestItemRecipe = WebRequest.Create(url);
                     using (var responseItem = requestItemRecipe.GetResponse())
                     {
@@ -38,9 +38,8 @@ namespace DiscordBotHandler.Services.Providers
                 }
                 if (_type.Equals(StorageContains.DotaHero))
                     url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/" + objName.Replace("npc_dota_hero_", "") + ".png";
-                if(_type.Equals(StorageContains.DotaItem))
-                    url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images//items/" + objName.Replace("item_", "") + "_lg.png";
-
+                if (_type.Equals(StorageContains.DotaItem))
+                    url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/" + objName.Replace("item_", "") + ".png";
                 var requestItem = WebRequest.Create(url);
                 using (var responseItem = requestItem.GetResponse())
                 {
