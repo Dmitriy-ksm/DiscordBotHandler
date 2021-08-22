@@ -95,11 +95,7 @@ namespace DiscordBotHandler.Services
                 //Cant be checked by test
                 if(command == "all")
                 {
-                    channel.Commands = new List<CommandAccess>();
-                    if (!IsRemove)
-                    {
-                        channel.Commands.Add(commandDb);
-                    }
+                    channel.Commands = IsRemove ? new List<CommandAccess>() : new List<CommandAccess>() { commandDb };
                 }
                 else
                 {

@@ -1,5 +1,6 @@
 ﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Entity.Entities;
+using DiscordBotHandler.Test.Classes;
 using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -7,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit.Abstractions;
 
 namespace DiscordBotHandler.Test
@@ -37,22 +40,26 @@ namespace DiscordBotHandler.Test
 
             return mock;
         }
-        public class FakeContext : DbContext, IEFContext
+        public delegate void SaveFunction(params IDbSetMock[] items);
+        public void SaveChangesInFakeContext(Mock<FakeContext> mock, CancellationToken token, SaveFunction SaveFunc, params IDbSetMock[] items)
         {
-            public virtual DbSet<CryptoInfo> CryptoInfo { get; set; }
-            public virtual DbSet<CommandAccess> CommandAccesses { get; set; }
-            public virtual DbSet<Guilds> Guilds { get; set; }
-            public virtual DbSet<Channels> Channels { get; set; }
-            public virtual DbSet<UserInfo> UserInfos { get; set; }
-            public virtual DbSet<WordSearch> WordSearches { get; set; }
-            public virtual DbSet<Cooldown> Cooldowns { get; set; }
+            mock.Setup(c => c.SaveChangesAsync(token)).Returns(() => Task.Run(() => { SaveFunc(items); return 1; })).Verifiable();
+            mock.Setup(c => c.SaveChanges()).Returns(() => { SaveFunc(items); return 1; }).Verifiable();
         }
         public void SaveFakeDbSets(params IDbSetMock[] items)
         {
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 item.SaveChanges();
             }
+        }
+
+        protected IQueryable<Guilds> GetTestGuilds()
+        {
+            return new List<Guilds>()
+            {
+                new Guilds{ GuildId = 1, VoiceChannelId = 0, WordSearches = new List<WordSearch>()}
+            }.AsQueryable();
         }
     }
 }

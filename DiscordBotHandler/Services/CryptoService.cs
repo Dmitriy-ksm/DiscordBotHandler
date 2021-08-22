@@ -24,7 +24,7 @@ namespace DiscordBotHandler.Services
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
 
-            var newCrypto = await getEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
+            var newCrypto = await GetEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
             var result = "Текущийкурс Ether: " + newCrypto.EthUsd + "$" + Environment.NewLine;
             var lastCryptoDataDb = _dbContext.CryptoInfo.AsQueryable().OrderByDescending(x => x.Id).FirstOrDefault();
             EtherGasBotData lastCryptoData = null;
@@ -59,7 +59,7 @@ namespace DiscordBotHandler.Services
             result += "Газ: " + newCrypto.GasAvarage + " gwei";
             return result;
         }
-        public static async Task<EtherGasBotData> getEtherGas(string apiKey)
+        public static async Task<EtherGasBotData> GetEtherGas(string apiKey)
         {
             EtherGasBotData returnValue = new EtherGasBotData();
             HttpClient client = new HttpClient();

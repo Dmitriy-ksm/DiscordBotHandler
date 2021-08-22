@@ -1,6 +1,7 @@
 ﻿using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Services;
+using DiscordBotHandler.Test.Classes;
 using EntityFrameworkCoreMock;
 using Moq;
 using System.Collections.Generic;
@@ -36,9 +37,8 @@ namespace DiscordBotHandler.Test
             mock.Setup(c => c.Channels).Returns(mockSetChannel.Object);
             mock.Setup(c => c.Guilds).Returns(mockSetGuild.Object);
             mock.Setup(c => c.CommandAccesses).Returns(mockSetCommandAcces.Object);
-            mock.Setup(c => c.SaveChangesAsync(token)).Returns(() => Task.Run(() => { SaveFakeDbSets(mockSetChannel, mockSetGuild, mockSetCommandAcces); return 1; })).Verifiable();
-            mock.Setup(c => c.SaveChanges()).Returns(() => { SaveFakeDbSets(mockSetChannel, mockSetGuild, mockSetCommandAcces); return 1; }).Verifiable();
-            //mock.Object.CommandAccesses.Add(new CommandAccess() { Command = "all", Channels = new List<Channels>() });
+
+            SaveChangesInFakeContext(mock, token, SaveFakeDbSets, mockSetChannel, mockSetGuild, mockSetCommandAcces);
 
             var verificatorService = new VerificateCommandService(mock.Object);
             #endregion
@@ -52,10 +52,12 @@ namespace DiscordBotHandler.Test
             #endregion
 
             #region Assert
-            Assert.True(!firstCheck);
+            Assert.False(firstCheck);
             Assert.True(secondCheck);
-            Assert.True(!thirdCheck);
+            Assert.False(thirdCheck);
             #endregion
+
+            SetTestOutput("Verificator test passed");
         }
 
 
@@ -73,12 +75,5 @@ namespace DiscordBotHandler.Test
             return new List<CommandAccess>().AsQueryable();
         }
 
-        private IQueryable<Guilds> GetTestGuilds()
-        {
-            return new List<Guilds>()
-            {
-                new Guilds{ GuildId = 1, VoiceChannelId = 0, WordSearches = new List<WordSearch>()}
-            }.AsQueryable();
-        }
     }
 }
