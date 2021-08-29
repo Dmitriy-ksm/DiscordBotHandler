@@ -3,9 +3,9 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DiscordBotHandler.Logger
+namespace DiscordBotHandler.Services
 {
-    class Logger : ILogger
+    public class LoggerService : ILogger
     {
         const string directory = "log";
         string _logFile;

@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
-    class VerificateCommand : IVerificateCommand
+    public class VerificateCommandService : IVerificateCommand
     {
-        private EFContext _db;
-        public VerificateCommand(EFContext db)
+        private IEFContext _db;
+        public VerificateCommandService(IEFContext db)
         {
             _db = db;
         }
@@ -86,19 +86,16 @@ namespace DiscordBotHandler.Services
                 commandDb = new CommandAccess()
                 {
                     Command = command,
-                    Channels = new List<Channels>()
+                    Channels = IsRemove ? new List<Channels>() : new List<Channels>() { channel }
                 };
                 _db.CommandAccesses.Add(commandDb);
             }
             else
             {
+                //Cant be checked by test
                 if(command == "all")
                 {
-                    channel.Commands = new List<CommandAccess>();
-                    if (!IsRemove)
-                    {
-                        channel.Commands.Add(commandDb);
-                    }
+                    channel.Commands = IsRemove ? new List<CommandAccess>() : new List<CommandAccess>() { commandDb };
                 }
                 else
                 {

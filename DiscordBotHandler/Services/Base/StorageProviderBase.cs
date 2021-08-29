@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DiscordBotHandler.Services.Base
 {
-    class StorageProviderBase : IStorage<Image>
+    public class StorageProviderBase : IStorage<Image>
     {
         private bool _disposed = false;
         private readonly string _directory;

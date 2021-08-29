@@ -16,6 +16,7 @@ using Image = SixLabors.ImageSharp.Image;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Services.Providers;
 using DiscordBotHandler.Helpers.Dota;
+using DiscordBotHandler.Entity;
 
 namespace DiscordBotHandler
 {
@@ -47,9 +48,10 @@ namespace DiscordBotHandler
 
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
+                .AddScoped<IEFContext>(provider => provider.GetService<EFContext>())
                 .AddSingleton<DiscordSocketClient>()
-                .AddSingleton<ImageStorageHero>()
-                .AddSingleton<ImageStorageItem>()
+                .AddSingleton<ImageStorageHeroService>()
+                .AddSingleton<ImageStorageItemService>()
                 .AddTransient<Func<StorageContains, IStorageProvider<Image>>>(serviceProvider => key =>
                 {
                     switch (key)
@@ -67,22 +69,22 @@ namespace DiscordBotHandler
                     switch (key)
                     {
                         case StorageContains.DotaHero:
-                            return serviceProvider.GetService<ImageStorageHero>();
+                            return serviceProvider.GetService<ImageStorageHeroService>();
                         case StorageContains.DotaItem:
-                            return serviceProvider.GetService<ImageStorageItem>();
+                            return serviceProvider.GetService<ImageStorageItemService>();
                         default:
                             throw new KeyNotFoundException();
                     }
                 })
                 .AddSingleton<HttpClient>()
-                .AddSingleton<ILogger, Logger.LoggerConsole>()
-                .AddSingleton<IDraw<DotaGameResult>, DotaImageDraw>()
-                .AddSingleton<IDotaAssistans, DotaAssistans>()
-                .AddSingleton<ICrypto, Crypto>()
-                .AddSingleton<IPlayer, PlayerEmpty>()
+                .AddSingleton<ILogger, LoggerConsoleService>()
+                .AddSingleton<IDraw<DotaGameResult>, DotaImageDrawService>()
+                .AddSingleton<IDotaAssistans, DotaAssistansService>()
+                .AddSingleton<ICrypto, CryptoService>()
+                .AddSingleton<IPlayer, PlayerEmptyService>()
                 .AddSingleton<IWordSearch, WordSearchService>()
-                .AddSingleton<IVerificateCommand, VerificateCommand>()
-                .AddSingleton<IValidator, Validator>()
+                .AddSingleton<IVerificateCommand, VerificateCommandService>()
+                .AddSingleton<IValidator, ValidatorService>()
                  .AddSingleton((provider) =>
                  {
                      var service = new CommandService();
@@ -90,7 +92,7 @@ namespace DiscordBotHandler
                          .GetAwaiter().GetResult();
                      return service;
                  })
-                 .AddSingleton<ICooldown, Cooldown>()
+                 .AddSingleton<ICooldown, CooldownService>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
         }

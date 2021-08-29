@@ -6,7 +6,7 @@ using System.IO;
 
 namespace DiscordBotHandler.Entity.Data
 {
-    public class EFContext : DbContext
+    public class EFContext : DbContext, IEFContext
     {
 
 

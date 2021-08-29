@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Services;
+﻿using DiscordBotHandler.Enum;
 
 namespace DiscordBotHandler.Helpers
 {
@@ -6,7 +6,7 @@ namespace DiscordBotHandler.Helpers
     {
         public const ulong SteamAccount3264BitConst  = 76561197960265728;
 
-        public static readonly Sizes DotaMiniMapSizes = new Sizes()
+        public static readonly MinimapSizes DotaMiniMapSizes = new MinimapSizes()
         {
             fullWidth = 1920,
             fullHeight = 1080,
@@ -30,5 +30,11 @@ namespace DiscordBotHandler.Helpers
             heroPortraitPickBanHeight = 75,
             pickBanHeight = 255,
         };
+
+        public const string CommandModuleNameCrypto = "Crypto";
+        public const string CommandModuleNameDota = "Dota";
+        public const string CommandModuleNamePlayer = "Player";
+        public const string CommandModuleNameUserManager = "UserManager";
+        public const string CommandModuleNameWordSearch = "WordSearch";
     }
 }

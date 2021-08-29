@@ -1,18 +1,19 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
-    class Cooldown : ICooldown
+    public class CooldownService : ICooldown
     {
-        private EFContext _db;
+        private IEFContext _db;
         private ILogger _logger;
-        public Cooldown(EFContext db, ILogger logger)
+        public CooldownService(IServiceProvider services)
         {
-            _db = db;
-            _logger = logger;
+            _db = services.GetRequiredService<IEFContext>(); 
+            _logger = services.GetRequiredService<ILogger>();
         }
         public bool Check(string key)
         {

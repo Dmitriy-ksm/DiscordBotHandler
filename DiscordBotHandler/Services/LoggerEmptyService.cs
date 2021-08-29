@@ -1,9 +1,9 @@
 ﻿using DiscordBotHandler.Interfaces;
 using System.Threading.Tasks;
 
-namespace DiscordBotHandler.Logger
+namespace DiscordBotHandler.Services
 {
-    class LoggerEmpty : ILogger
+    public class LoggerEmptyService : ILogger
     {
         public Task<Task> LogMessage(string message)
         {

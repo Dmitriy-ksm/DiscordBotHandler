@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.WordSearch
 {
-    [Name("wordsearch")]
+    [Name(Consts.CommandModuleNameWordSearch)]
     public class WordSearchModule : ModuleBase<SocketCommandContext>
     {
         private readonly IValidator _validator;
@@ -21,7 +22,7 @@ namespace DiscordBotHandler.Function.Modules.WordSearch
             _wordSearch = services.GetRequiredService<IWordSearch>();
             _logger = services.GetRequiredService<ILogger>();
         }
-        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid("wordsearch", guildId, channelId, _logger);
+        private bool IsValidChannel(ulong guildId, ulong channelId) => _validator.IsValid(Consts.CommandModuleNameWordSearch, guildId, channelId, _logger);
 
         [Command("addWordsAndReply")]
         [Summary("Adding words and replies")]

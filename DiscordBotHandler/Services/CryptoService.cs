@@ -1,4 +1,4 @@
-﻿using DiscordBotHandler.Entity.Data;
+﻿using DiscordBotHandler.Entity;
 using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Interfaces;
 using System;
@@ -7,20 +7,24 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
 {
-    class Crypto:ICrypto
+    public class CryptoService :ICrypto
     {
-        private EFContext _dbContext;
-        public Crypto(EFContext dbContext)
+        private IEFContext _dbContext;
+        public CryptoService(IEFContext dbContext)
         {
             _dbContext = dbContext;
         }
         public async Task<string> GetCryptoInfoAsync()
         {
-            var newCrypto = await getEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            var newCrypto = await GetEtherGas(ConfigurationManager.AppSettings["etherScanApi"]);
             var result = "Текущийкурс Ether: " + newCrypto.EthUsd + "$" + Environment.NewLine;
             var lastCryptoDataDb = _dbContext.CryptoInfo.AsQueryable().OrderByDescending(x => x.Id).FirstOrDefault();
             EtherGasBotData lastCryptoData = null;
@@ -44,7 +48,7 @@ namespace DiscordBotHandler.Services
             };
 
             _dbContext.CryptoInfo.Add(cryptoInfoNew);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(token);
             if (lastCryptoData != null)
             {
                 double procent = ((Convert.ToDouble(newCrypto.EthUsd, CultureInfo.InvariantCulture) / Convert.ToDouble(lastCryptoData.EthUsd, CultureInfo.InvariantCulture) - 1) * 100);
@@ -55,7 +59,7 @@ namespace DiscordBotHandler.Services
             result += "Газ: " + newCrypto.GasAvarage + " gwei";
             return result;
         }
-        public static async Task<EtherGasBotData> getEtherGas(string apiKey)
+        public static async Task<EtherGasBotData> GetEtherGas(string apiKey)
         {
             EtherGasBotData returnValue = new EtherGasBotData();
             HttpClient client = new HttpClient();

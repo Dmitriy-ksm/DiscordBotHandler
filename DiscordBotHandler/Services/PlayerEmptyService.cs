@@ -3,9 +3,9 @@ using DiscordBotHandler.Interfaces;
 
 namespace DiscordBotHandler.Services
 {
-    class PlayerEmpty : IPlayer
+    public class PlayerEmptyService : IPlayer
     {
-        public PlayerEmpty(DiscordSocketClient client, ILogger logger)
+        public PlayerEmptyService(DiscordSocketClient client, ILogger logger)
         {
 
         }
