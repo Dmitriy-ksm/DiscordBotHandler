@@ -45,10 +45,18 @@ namespace DiscordBotHandler.Services.Providers
                 {
                     using (var streamItem = responseItem.GetResponseStream())
                     {
-                        Image result = Image.Load(streamItem);
+                        Image result = null;
+                        try 
+                        {
+                            result = Image.Load(streamItem); 
+                        }   
+                        finally
+                        {
+                            if(result==null)
+                                result =  Image.Load("unknown.png");
+                        }
                         if(recipeItemImage != null)
                             result.Mutate(i => i.DrawImage(recipeItemImage,new Point((int)(result.Width*0.25),(int)(result.Height*0.25)), 1f));
-
                         return result;
                     }
                 }
