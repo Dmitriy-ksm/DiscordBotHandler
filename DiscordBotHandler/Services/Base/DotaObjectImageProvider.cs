@@ -1,6 +1,7 @@
 ﻿using DiscordBotHandler.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System;
 using System.Net;
 
 namespace DiscordBotHandler.Services.Providers
@@ -41,25 +42,29 @@ namespace DiscordBotHandler.Services.Providers
                 if (_type.Equals(StorageContains.DotaItem))
                     url = @"https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/" + objName.Replace("item_", "") + ".png";
                 var requestItem = WebRequest.Create(url);
-                using (var responseItem = requestItem.GetResponse())
+                Image result = null;
+                try 
                 {
-                    using (var streamItem = responseItem.GetResponseStream())
+                    using (var responseItem = requestItem.GetResponse())
                     {
-                        Image result = null;
-                        try 
+                        using (var streamItem = responseItem.GetResponseStream())
                         {
-                            result = Image.Load(streamItem); 
-                        }   
-                        finally
-                        {
-                            if(result==null)
-                                result =  Image.Load("unknown.png");
+                            result = Image.Load(streamItem);
+                            if(recipeItemImage != null)
+                                result.Mutate(i => i.DrawImage(recipeItemImage,new Point((int)(result.Width*0.25),(int)(result.Height*0.25)), 1f));
                         }
-                        if(recipeItemImage != null)
-                            result.Mutate(i => i.DrawImage(recipeItemImage,new Point((int)(result.Width*0.25),(int)(result.Height*0.25)), 1f));
-                        return result;
                     }
                 }
+                catch (Exception e)
+                {
+                    //_logger.LogMessage(e.Message);
+                }
+                finally
+                {
+                    if(result==null)
+                        result =  Image.Load("unknown.png");
+                }
+                return result;
             }
         }
     }

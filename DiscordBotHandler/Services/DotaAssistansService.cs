@@ -1,13 +1,16 @@
 ﻿using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Interfaces;
+using Newtonsoft.Json;
 using Steam.Models.DOTA2;
 using SteamWebAPI2.Interfaces;
 using SteamWebAPI2.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Services
@@ -32,9 +35,10 @@ namespace DiscordBotHandler.Services
             GetHeroes();
             GetItems();
         }
-
-        public Hero GetHeroById(uint id) => Heroes.FirstOrDefault(h => h.Id == id);
-        public GameItem GetItemById(uint id) => Items.FirstOrDefault(i => i.Id == id);
+         private Hero defaultHeroes = new Hero {Id = uint.MaxValue, Name = "unknowm"};
+        private GameItem defaultGameItem = new GameItem {Id = uint.MaxValue, Name = "unknowm"};
+        public Hero GetHeroById(uint id) => Heroes.FirstOrDefault(h => h.Id == id, defaultHeroes);
+        public GameItem GetItemById(uint id) => Items.FirstOrDefault(i => i.Id == id, defaultGameItem);
 
         public async Task<ulong> GetSteamIdAsync(string url)
         {
@@ -100,7 +104,23 @@ namespace DiscordBotHandler.Services
         }
 
         async void GetHeroes() => Heroes = (await dotaEconInterface.GetHeroesAsync()).Data.ToList();
-        async void GetItems() => Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
+        //async void GetItems() => Items = (await dotaEconInterface.GetGameItemsAsync()).Data.ToList();
+        void GetItems()
+        {
+            Items = new List<GameItem>();
+            using (StreamReader r = new StreamReader("item.json"))
+            {
+                string json = r.ReadToEnd();
+                dynamic array = JsonConvert.DeserializeObject(json);
+                foreach (var item in array.items)
+                {
+                    GameItem gameItem = new GameItem();
+                    gameItem.Id = item.id;
+                    gameItem.Name = item.name;
+                    Items.Add(gameItem);
+                }
+            }
+        }
 
         public async Task<DotaGameResult> GetDota(ulong matchId)
         {

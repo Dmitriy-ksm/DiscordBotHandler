@@ -56,14 +56,11 @@ namespace DiscordBotHandler.Function
         {
             if (msg.Author.Id == _client.CurrentUser.Id)
                 return;
-
             var message = msg as SocketUserMessage;
             if (message == null || message.Author.IsBot)
                 return;
-
             var context = new SocketCommandContext(_client, message);
             string reply = _cooldown.Check("wordsearch") ? _wordSearch.SearchWord(context.Guild.Id, msg.Content) : null;
-           
             if (reply != null)
             {
                 _cooldown.Set("wordsearch");
@@ -73,7 +70,6 @@ namespace DiscordBotHandler.Function
             if (!(message.HasCharPrefix('!', ref argPos) ||
                     message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
                 return;
-
             await _commands.ExecuteAsync(context, argPos, _services);
         }
         public async Task<Task> Log(LogMessage msg)

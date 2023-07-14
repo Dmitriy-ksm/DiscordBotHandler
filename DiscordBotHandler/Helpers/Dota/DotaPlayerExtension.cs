@@ -53,7 +53,7 @@ namespace DiscordBotHandler.Helpers.Dota
             {
                 ItemId = item,
                 Slot = slot,
-                ItemName = allItems.FirstOrDefault(i => i.Id == item).LocalizedName
+                ItemName = allItems.FirstOrDefault(i => i.Id == item)?.Name ?? "unknown",
             } : new DotaItems();
         }
     }

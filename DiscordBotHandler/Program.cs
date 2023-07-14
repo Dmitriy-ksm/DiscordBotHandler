@@ -45,11 +45,14 @@ namespace DiscordBotHandler
         }
         private ServiceProvider ConfigureServices()
         {
-
+            var config = new DiscordSocketConfig()
+                {
+                    GatewayIntents = GatewayIntents.All
+                };
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
                 .AddScoped<IEFContext>(provider => provider.GetService<EFContext>())
-                .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<DiscordSocketClient>(serviceProvider => new DiscordSocketClient(config))
                 .AddSingleton<ImageStorageHeroService>()
                 .AddSingleton<ImageStorageItemService>()
                 .AddTransient<Func<StorageContains, IStorageProvider<Image>>>(serviceProvider => key =>
