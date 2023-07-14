@@ -15,6 +15,7 @@ using SixLabors.Fonts;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Enum;
+using System.Linq;
 
 namespace DiscordBotHandler.Services
 {
@@ -55,7 +56,14 @@ namespace DiscordBotHandler.Services
                 heroPortrait.Mutate(o => o.Resize(new Size(_size.heroPortraitWidth, _size.heroPortraitHeight)));
                 pickedHeores.Add(heroes.HeroId, heroPortrait);
                 hero.Mutate(o => o.DrawImage(heroPortrait, new Point(_size.heroesColumnIndent, 0), 1f));
-
+                foreach(var item in heroes.Items.Where(item=>item.ItemName =="unknown"))
+                {
+                    _logger.LogMessage($"ItemId: {item.ItemId}, slot: {item.Slot}, Hero: {heroes.HeroName}");
+                }
+                  foreach(var item in heroes.BackPacks.Where(item=>item.ItemName == "unknown"))
+                {
+                    _logger.LogMessage($"ItemId: {item.ItemId}, slot: {item.Slot}, Hero: {heroes.HeroName}");
+                }
                 foreach (var item in heroes.Items)
                 {
                     if (item.ItemId != 0)
