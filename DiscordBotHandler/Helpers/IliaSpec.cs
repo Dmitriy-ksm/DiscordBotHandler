@@ -42,10 +42,13 @@ namespace DiscordBotHandler.Helpers
                 {
                     var server = client.GetGuild(guildId);
                     var user = server.GetUser(iliaId);
-                    await user.ModifyAsync(x =>
+                    if(user != null)
                     {
-                        x.Nickname = new_ilya_nick;
-                    });
+                        await user.ModifyAsync(x =>
+                        {
+                            x.Nickname = new_ilya_nick;
+                        });
+                    }
                 };
             }
         }
