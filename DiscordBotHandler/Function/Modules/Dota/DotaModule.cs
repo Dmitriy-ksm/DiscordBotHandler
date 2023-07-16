@@ -1,14 +1,11 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBotHandler.Entity.Data;
-using DiscordBotHandler.Entity.Entities;
 using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DiscordBotHandler.Function.Modules.Dota
@@ -40,59 +37,31 @@ namespace DiscordBotHandler.Function.Modules.Dota
 
             if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
-                if (steamId > 0)
-                {
-                    var res = await _dota.GetDotaAsync(steamId);
-                    res.PlayerId = steamId;
-                    using (MemoryStream imageStream = new MemoryStream())
-                    {
-                        _draw.DrawImage(res, imageStream);
-                        imageStream.Position = 0;
-                        await Context.Channel.SendFileAsync(imageStream, "Test.jpeg");
-                    }
-                }
-                else
-                    _ = _logger.LogMessage("Нет подходящего steamId");
+                await HelpFunctions.GameByUrl(_dota, _draw, _logger, steamId, async (file,fileName)=>await Context.Channel.SendFileAsync(file, fileName));
             }
         }
+
         [Command("gameById")]
         [Summary("Getting game history")]
         public async Task GetDotaInfoes([Summary("MatchId for which you need to pull the data now")] ulong matchId)
         {
             if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
-
-                var res = await _dota.GetDotaByMatchIdAsync(matchId);
-                using (MemoryStream imageStream = new MemoryStream())
-                {
-                    _draw.DrawImage(res, imageStream);
-                    imageStream.Position = 0;
-                    await Context.Channel.SendFileAsync(imageStream, "Test.jpeg");
-                }
+                await HelpFunctions.GameById(_dota, _draw, matchId, async (file,fileName)=>await Context.Channel.SendFileAsync(file, fileName));
             }
         }
+
         [Command("game")]
         [Summary("Getting game history")]
         public async Task GetDotaInfoes([Summary("The (optional) user to get info from, else receives data from the sender of the message")] SocketUser user = null)
         {
             if (IsValidChannel(Context.Guild.Id, Context.Channel.Id))
             {
-                var userInfo = user ?? Context.User;
-                UserInfo userInfoDb = _db.UserInfos.FirstOrDefault(u => u.Id == userInfo.Id);
-                if (userInfoDb != null && userInfoDb.SteamId.HasValue)
-                {
-                    var res = await _dota.GetDotaAsync(userInfoDb.SteamId.Value);
-                    res.PlayerId = userInfoDb.SteamId;
-                    using (MemoryStream imageStream = new MemoryStream())
-                    {
-                        _draw.DrawImage(res, imageStream);
-                        imageStream.Position = 0;
-                        await Context.Channel.SendFileAsync(imageStream, "Test.jpeg");
-                    }
-                }
-                else
-                    _ = _logger.LogMessage("Нет подходящего steamId");
+                ulong userInfoId = user?.Id ?? Context.User?.Id ?? 0;
+                await HelpFunctions.GameByUser(_db, _dota, _draw, _logger, userInfoId, async (file,fileName)=>await Context.Channel.SendFileAsync(file, fileName));
             }
         }
+
+        
     }
 }

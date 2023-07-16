@@ -17,6 +17,7 @@ using DiscordBotHandler.Helpers;
 using DiscordBotHandler.Services.Providers;
 using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Entity;
+using DiscordBotHandler.Slash;
 
 namespace DiscordBotHandler
 {
@@ -33,16 +34,19 @@ namespace DiscordBotHandler
             var _db = services.GetService<EFContext>();
 
             var commandHandler = services.GetService<CommandHandler>();
-            IliaSpec.Init(out _, _client, _db);
+            //IliaSpec.Init(out _, _client, _db);
 
             await _client.LoginAsync(TokenType.Bot,
                     ConfigurationManager.AppSettings["BotToken"]);
             await _client.StartAsync();
 
             await commandHandler.InitializeAsync();
+
+            await services.GetService<SlashCommands>().InitializeAsync();
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
+
         private ServiceProvider ConfigureServices()
         {
             var config = new DiscordSocketConfig()
@@ -88,14 +92,15 @@ namespace DiscordBotHandler
                 .AddSingleton<IWordSearch, WordSearchService>()
                 .AddSingleton<IVerificateCommand, VerificateCommandService>()
                 .AddSingleton<IValidator, ValidatorService>()
-                 .AddSingleton((provider) =>
-                 {
-                     var service = new CommandService();
-                     service.AddModulesAsync(Assembly.GetEntryAssembly(), provider)
-                         .GetAwaiter().GetResult();
-                     return service;
-                 })
-                 .AddSingleton<ICooldown, CooldownService>()
+                .AddSingleton((provider) =>
+                {
+                    var service = new CommandService();
+                    service.AddModulesAsync(Assembly.GetEntryAssembly(), provider)
+                        .GetAwaiter().GetResult();
+                    return service;
+                })
+                .AddSingleton<ICooldown, CooldownService>()
+                .AddSingleton<SlashCommands>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
         }
