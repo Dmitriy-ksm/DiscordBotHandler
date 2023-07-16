@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using DiscordBotHandler.Entity.Data;
 using DiscordBotHandler.Helpers.Dota;
 using DiscordBotHandler.Helpers;
+using System.Linq;
 
 namespace DiscordBotHandler.Slash
 {
@@ -47,7 +48,12 @@ namespace DiscordBotHandler.Slash
         }
 
         List<ApplicationCommandProperties> applicationCommandProperties = new();
-        private string cryptoCommandName = "криптовалютчик";
+        private const string cryptoCommandName = "криптовалютчик";
+        private const string gameFirstCommandName = "game-by-steam-url";
+        private const string gameSecondCommandName = "game-by-id";
+        private const string gameThirdCommandName = "game";
+        private const string addInfoCommandName = "add-infoes";
+        private const string addSteamUserCommandName = "add-steam-user";
         private async Task Client_Ready() 
         {
             // Let's build a guild command! We're going to need a guild so lets just put that in a variable.
@@ -64,35 +70,43 @@ namespace DiscordBotHandler.Slash
             
             applicationCommandProperties.Add(cryptoCommand.Build());
 
-            var gameBySteamUrlCommand = new SlashCommandBuilder()
-                .WithName("game-by-steam-url")
-                .WithDescription("Getting user`s game by steamURL");
-
-            applicationCommandProperties.Add(gameBySteamUrlCommand.Build());
-
-            var gameByIdCommand = new SlashCommandBuilder()
-                .WithName("game-by-id")
-                .WithDescription("Getting game by id");
-
-            applicationCommandProperties.Add(gameByIdCommand.Build());
-
             var gameCommand = new SlashCommandBuilder()
-                .WithName("game")
-                .WithDescription("Getting discord user game");
+                .WithName("dota")
+                .WithDescription("Commands related to dota")
+                .AddOption(new SlashCommandOptionBuilder()
+                    .WithName(gameFirstCommandName)
+                    .WithDescription("Getting user`s game by steamURL")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption("url", ApplicationCommandOptionType.String, "Steam user URL", isRequired: true))
+                .AddOption(new SlashCommandOptionBuilder()
+                    .WithName(gameSecondCommandName)
+                    .WithDescription("Getting game by id")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption("id", ApplicationCommandOptionType.Integer, "Game ID", isRequired: true))
+                .AddOption(new SlashCommandOptionBuilder()
+                    .WithName(gameThirdCommandName)
+                    .WithDescription("Getting discord user game")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption("user", ApplicationCommandOptionType.User, "User, whos game need to be load"));
 
             applicationCommandProperties.Add(gameCommand.Build());
 
-            var addInfoesCommand = new SlashCommandBuilder()
-                .WithName("add-infoes")
-                .WithDescription("Adding additional info about users");
+            var userCommand = new SlashCommandBuilder()
+                .WithName("user")
+                .WithDescription("Commands related to user management")
+                .AddOption(new SlashCommandOptionBuilder()
+                    .WithName(addInfoCommandName)
+                    .WithDescription("Adding additional info about users")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption("key", ApplicationCommandOptionType.String, "DB key", isRequired:true)
+                    .AddOption("info", ApplicationCommandOptionType.String, "Info"))
+                .AddOption(new SlashCommandOptionBuilder()
+                    .WithName(addSteamUserCommandName)
+                    .WithDescription("Adding steamId to discord user")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption("url", ApplicationCommandOptionType.String, "Steam user URL", isRequired: true));
 
-            applicationCommandProperties.Add(addInfoesCommand.Build());
-
-            var addSteamUserCommand = new SlashCommandBuilder()
-                .WithName("add-steam-user")
-                .WithDescription("Adding steamId to discord user");
-
-            applicationCommandProperties.Add(addSteamUserCommand.Build());
+            //applicationCommandProperties.Add(userCommand.Build());
 
             try
             {
@@ -116,20 +130,53 @@ namespace DiscordBotHandler.Slash
             }
         }
 
-        private async Task<Task> SlashCommandHandler(SocketSlashCommand command)
+        private async Task SlashCommandHandler(SocketSlashCommand command)
         {
-            if (command.Data.Name == cryptoCommandName) 
+            string subCommandName = command.Data?.Options?.First()?.Name ?? "";
+            ulong guildId = command.GuildId ?? 0;
+            ulong channelId = command.ChannelId ?? 0;
+            switch(command.Data.Name)
             {
-                if(!_validator.IsValid(Consts.CommandModuleNameCrypto.ToLower(), command.GuildId ?? 0, command.ChannelId ?? 0, _log))
-                {
-                    await command.RespondAsync($"Crypto command not allowed here");
-                    return Task.CompletedTask;
-                }
-                await command.RespondAsync(Task.Run(async () => { return await _cryptoService.GetCryptoInfoAsync(); }).Result);
-                return Task.CompletedTask;
+                case cryptoCommandName:
+                    if(_validator.IsValid(Consts.CommandModuleNameCrypto.ToLower(), guildId, channelId, _log))
+                    {
+                        await command.RespondAsync(Task.Run(async () => { return await _cryptoService.GetCryptoInfoAsync(); }).Result);
+                    }
+                    break;
+                case "dota":
+                    if (_validator.IsValid(Consts.CommandModuleNameDota.ToLower(), guildId, channelId, _log))
+                    {
+                        switch(subCommandName) 
+                        {
+                            case gameFirstCommandName:
+                                string url = (string)(command.Data.Options.First().Options?.First()?.Value ?? "");
+                                if (url == "") break;
+                                ulong steamId = Task.Run(async () => { return await _dota.GetSteamIdAsync(url); }).Result;
+                                await HelpFunctions.GameByUrl(_dota, _draw, _log, steamId, async (file,fileName)=>await command.RespondWithFileAsync(file, fileName));
+                                break;
+                            case gameSecondCommandName:
+                                ulong matchId = (ulong)(command.Data.Options.First().Options?.First()?.Value ?? 0);
+                                if(matchId == 0) break;
+                                await HelpFunctions.GameById(_dota, _draw, matchId, async (file,fileName)=>await command.RespondWithFileAsync(file, fileName));
+                                break;
+                            case gameThirdCommandName:
+                                ulong userInfoId = ((SocketUser)command.Data.Options.First().Options?.FirstOrDefault()?.Value)?.Id ?? command.User?.Id ?? 0;
+                                await HelpFunctions.GameByUser(_db, _dota, _draw, _log, userInfoId, async (file,fileName)=>await command.RespondWithFileAsync(file, fileName));
+                                break;
+                        }
+                    }
+                    break;
+                case "user":
+                    switch(subCommandName) 
+                    {
+                        case addInfoCommandName:
+                            break;
+                        case addSteamUserCommandName:
+                            break;
+                    }
+                    break;
             }
-            await command.RespondAsync($"You executed {command.Data.Name}");
-            return Task.CompletedTask;
+            _log.LogMessage($"You executed {command.Data.Name}");
         }
     }
 }
